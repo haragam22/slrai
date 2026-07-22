@@ -1,0 +1,31 @@
+rules:
+  - rule_id: M9_C1
+    module: M9_MSME
+    statutory_basis: "RBI MSME Restructuring Circular (Feb 2018 + Aug 2020)"
+    description: "MSME status must be confirmed from bank file before M9 runs"
+    preconditions:
+      - field: msme_claimed_by_borrower
+        operator: eq
+        value: true
+    checks:
+      - check_id: M9_C1_a
+        expression: "udyam_cert_in_bank_file == False"
+        result_if_true: UNKNOWN
+        severity: REVIEW_REQUIRED
+        message_template: "Borrower claims MSME status. No Udyam Certificate in bank file. Human confirmation required: check original credit file."
+        judgment_tags: [msme_restructuring]
+
+  - rule_id: M9_C2
+    module: M9_MSME
+    description: "Restructuring must have been offered to MSME before NPA classification"
+    preconditions:
+      - field: udyam_cert_in_bank_file
+        operator: eq
+        value: true
+    checks:
+      - check_id: M9_C2_a
+        expression: "restructuring_offered_pre_npa == False"
+        result_if_true: FAIL
+        severity: CURABLE
+        message_template: "Borrower is MSME (Udyam: {udyam_registration_number}). Restructuring not offered before NPA classification. Applicable circular: {applicable_rbi_circular}."
+        judgment_tags: [msme_restructuring, rbi_circular_msme]

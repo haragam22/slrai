@@ -1,0 +1,23 @@
+rules:
+  - rule_id: M7_C1
+    module: M7_MULTIPARTY_NOTICE
+    statutory_basis: "Section 13(2) SARFAESI — notice to all borrowers"
+    description: "All co-borrowers must be individually served"
+    checks:
+      - check_id: M7_C1_a
+        expression: "borrowers_served_notice < total_borrowers_in_loan"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Loan has {total_borrowers_in_loan} borrowers. Notice served on only {borrowers_served_notice}. Each unserved borrower is a separate fatal defect."
+        judgment_tags: [service_defect, co_borrower_notice]
+
+  - rule_id: M7_C2
+    module: M7_MULTIPARTY_NOTICE
+    description: "All guarantors/mortgagors must be individually served"
+    checks:
+      - check_id: M7_C2_a
+        expression: "guarantors_served_notice < total_guarantors_in_loan"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Loan has {total_guarantors_in_loan} guarantors. Notice served on only {guarantors_served_notice}."
+        judgment_tags: [service_defect, guarantor_notice]

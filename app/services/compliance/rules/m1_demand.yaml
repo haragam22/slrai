@@ -1,0 +1,132 @@
+rules:
+  - rule_id: M1_C1
+    module: M1_DEMAND_NOTICE
+    statutory_basis: "Section 13(2) SARFAESI Act 2002"
+    description: "60 days must elapse between demand notice and enforcement action"
+    preconditions:
+      - field: demand_notice_date
+        operator: is_not_null
+    checks:
+      - check_id: M1_C1_a
+        description: "60-day period not elapsed"
+        expression: "sixty_day_period_elapsed == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Enforcement action taken before 60-day period elapsed from demand notice dated {demand_notice_date}."
+        judgment_tags: [s13_2_notice_period, procedural_compliance]
+    pass_message_template: "60-day period from demand notice ({demand_notice_date}) satisfied."
+
+  - rule_id: M1_C2
+    module: M1_DEMAND_NOTICE
+    description: "Amount in demand notice must match account records within 5% tolerance"
+    preconditions:
+      - field: demand_notice_amount
+        operator: is_not_null
+      - field: actual_outstanding_amount
+        operator: is_not_null
+    checks:
+      - check_id: M1_C2_a
+        description: "Amount discrepancy exceeds 5%"
+        expression: "abs(demand_notice_amount - actual_outstanding_amount) / actual_outstanding_amount * 100 > 5"
+        result_if_true: FAIL
+        severity: CURABLE
+        message_template: "Demand notice amount ({demand_notice_amount}) differs from records ({actual_outstanding_amount}) by more than 5%."
+        judgment_tags: [amount_dispute, s13_2_accuracy]
+
+  - rule_id: M1_C3
+    module: M1_DEMAND_NOTICE
+    description: "Service mode must be valid under SARFAESI Rules"
+    checks:
+      - check_id: M1_C3_a
+        expression: "notice_service_mode not in ['registered_post_ad','personal_service','substituted_service','email_if_agreed']"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Notice service mode '{notice_service_mode}' is not a valid mode under SARFAESI Rules."
+        judgment_tags: [service_defect, s13_2_service]
+
+  - rule_id: M1_C4
+    module: M1_DEMAND_NOTICE
+    description: "Proof of service must be present in bank file"
+    checks:
+      - check_id: M1_C4_a
+        expression: "notice_dispatch_proof_present == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "No proof of service (POD/acknowledgment/affidavit) found. Cannot verify notice was served."
+        judgment_tags: [service_defect, proof_of_service]
+
+  # NEW v5.0 — M1_C5: Service date must be on or after notice issue date (data consistency)
+  - rule_id: M1_C5
+    module: M1_DEMAND_NOTICE
+    statutory_basis: "Section 13(2) SARFAESI Act 2002 — 60-day period runs from service, not issue"
+    description: "Service date must not predate notice issue date — catches data entry errors"
+    preconditions:
+      - field: demand_notice_date
+        operator: is_not_null
+      - field: notice_service_date
+        operator: is_not_null
+    checks:
+      - check_id: M1_C5_a
+        description: "Service date before notice issue date — data entry error"
+        expression: "notice_service_date < demand_notice_date"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Service date ({notice_service_date}) recorded before notice issue date ({demand_notice_date}). Data entry error — 60-day period computation will be wrong."
+        judgment_tags: [s13_2_notice_period, service_date_computation]
+    pass_message_template: "Service date ({notice_service_date}) on or after notice issue date ({demand_notice_date}). Correct date used for 60-day computation."
+
+  # NEW v5.0 — M1_C6: Demand notice must contain all prescribed content elements
+  - rule_id: M1_C6
+    module: M1_DEMAND_NOTICE
+    statutory_basis: "Section 13(2) SARFAESI Act 2002 — prescribed content of demand notice"
+    description: "Demand notice must state: (1) outstanding amount, (2) secured asset details, (3) 60-day demand, (4) consequences of non-payment"
+    preconditions:
+      - field: demand_notice_date
+        operator: is_not_null
+    checks:
+      - check_id: M1_C6_a
+        description: "Notice content not confirmed as complete"
+        expression: "notice_content_complete == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Demand notice does not appear to contain all 4 prescribed content elements required under Section 13(2). Notice may be defective on format. Ground: NOTICE_FORMAT_DEFECT."
+        judgment_tags: [s13_2_notice_format, notice_format_defect]
+    pass_message_template: "Demand notice content confirmed complete — all prescribed elements present."
+
+  # NEW v5.0 — M1_C7: Enforcement action must not predate 60-day moratorium expiry
+  - rule_id: M1_C7
+    module: M1_DEMAND_NOTICE
+    statutory_basis: "Section 13(2) SARFAESI Act 2002 — 60-day moratorium before Section 13(4)"
+    description: "Possession notice must not be issued before 60 days from service date"
+    preconditions:
+      - field: notice_service_date
+        operator: is_not_null
+      - field: possession_notice_date
+        operator: is_not_null
+    checks:
+      - check_id: M1_C7_a
+        description: "Possession notice issued before 60-day moratorium expired"
+        expression: "(possession_notice_date - notice_service_date).days < 60"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Possession notice dated {possession_notice_date} issued before 60-day moratorium expired from service on {notice_service_date}. Premature enforcement under Section 13(4) is a fatal defect."
+        judgment_tags: [s13_2_notice_period, premature_enforcement]
+    pass_message_template: "Possession notice issued after 60-day moratorium from service date ({notice_service_date})."
+
+  # NEW v5.1 — M1_C8: Authorized Officer authorization
+  - rule_id: M1_C8
+    module: M1_DEMAND_NOTICE
+    statutory_basis: "Authorized Officer Authorization"
+    description: "AO must have written authorization from principal officer"
+    preconditions:
+      - field: authorized_officer_name
+        operator: is_not_null
+    checks:
+      - check_id: M1_C8_a
+        description: "AO does not have written authorization"
+        expression: "ao_has_written_authorization == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Authorized Officer {authorized_officer_name} ({authorized_officer_designation}) lacks written authorization from the principal officer. Enforcement action is void."
+        judgment_tags: [ao_authorization_missing]
+    pass_message_template: "Authorized Officer {authorized_officer_name} has verified written authorization."

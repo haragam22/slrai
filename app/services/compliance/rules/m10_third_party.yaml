@@ -1,0 +1,160 @@
+# Third Party Rights Module — NEW v5.4
+#
+# Activates when sa_applicant_type is not BORROWER/GUARANTOR. Analyses the
+# third party's standing and the strength of their claim against the bank's
+# enforcement. M1-M9 still run for procedural grounds but M10 provides the
+# primary legal framework for the third party claim.
+#
+# KEY CASE: Celir LLP v. Bafna Motors (2023) 13 SCC 561
+# KEY CASE: Harshad Govardhan Sondagar (2014) 6 SCC 1 (pre-mortgage ATS)
+# KEY CASE: ITC v. Blue Coast Hotels (2018) 15 SCC 99 (post-mortgage lease)
+# KEY CASE: Oasis Dealcom v. Khazana Dealcomm (2016) 10 SCC 214 (second SA)
+# KEY LAW:  TPA 1882 Sections 52, 54, 58, 60
+
+rules:
+  # M10_C1 — ATS Holder Standing Under Section 17
+  # Threshold question: can a non-borrower file an SA at all?
+  # Courts are split — some allow, some deny — flag as ADVISORY.
+  - rule_id: M10_C1
+    module: M10_THIRD_PARTY
+    statutory_basis: "ACT"
+    description: "SA applicant is a third party ATS holder — standing under Section 17 is contested"
+    preconditions:
+      - field: sa_applicant_type
+        operator: eq
+        value: "THIRD_PARTY_ATS"
+    checks:
+      - check_id: M10_C1_a
+        expression: "sa_applicant_type == 'THIRD_PARTY_ATS'"
+        result_if_true: REVIEW
+        severity: ADVISORY
+        message_template: "SA applicant is a third party holding an Agreement to Sell — not the borrower or guarantor. Standing under Section 17 of the SARFAESI Act is contested for ATS holders. Some High Courts have allowed such SAs (Delhi HC, Madras HC) on the basis that the applicant is a person aggrieved by the measures. Other benches have denied standing. DRT will determine standing as a preliminary issue. Bank should prepare to contest maintainability."
+        judgment_tags: [celir_llp_bafna_motors, ats_standing]
+        ground_codes: [THIRD_PARTY_ATS]
+
+  # M10_C2 — ATS Simultaneous With Mortgage (Fraud Risk)
+  - rule_id: M10_C2
+    module: M10_THIRD_PARTY
+    statutory_basis: "BOTH"
+    description: "ATS and mortgage executed same date — strong bank fraud defense"
+    preconditions:
+      - field: sa_applicant_type
+        operator: eq
+        value: "THIRD_PARTY_ATS"
+      - field: ats_simultaneous_mortgage
+        operator: eq
+        value: true
+    checks:
+      - check_id: M10_C2_a
+        expression: "ats_simultaneous_mortgage == True"
+        result_if_true: FAIL
+        severity: HIGH
+        message_template: "Agreement to Sell (ATS) and mortgage deed executed on the same date ({ats_date} = {mortgage_date}). Bank will allege that the ATS was executed with knowledge of the mortgage and in collusion with the borrower to defeat the bank's security interest. The ATS holder cannot claim ignorance of the mortgage when both were executed simultaneously. This significantly weakens the third party's claim."
+        judgment_tags: [ats_mortgage_collusion]
+        ground_codes: [THIRD_PARTY_ATS]
+
+  # M10_C3 — ATS Holder Paid Substantial Consideration (mitigating factor)
+  - rule_id: M10_C3
+    module: M10_THIRD_PARTY
+    statutory_basis: "BOTH"
+    description: "ATS holder paid substantial consideration directly to loan account — mitigates fraud allegation"
+    preconditions:
+      - field: sa_applicant_type
+        operator: eq
+        value: "THIRD_PARTY_ATS"
+      - field: ats_payments_made_to_loan_account
+        operator: eq
+        value: true
+    checks:
+      - check_id: M10_C3_a
+        expression: "ats_payments_made_to_loan_account == True"
+        result_if_true: PASS
+        severity: ADVISORY
+        message_template: "ATS holder has made payments directly to the bank's loan account (total paid: Rs. {ats_advance_paid}). This demonstrates bona fide conduct and good faith. Courts have treated payment by the ATS holder into the loan account as evidence that the bank had knowledge of the arrangement and implicitly accepted the ATS holder as a de facto party to the loan servicing. This substantially mitigates the bank's fraud allegation under M10_C2."
+        judgment_tags: [celir_llp_bafna_motors, ats_bona_fide_payment]
+        ground_codes: [THIRD_PARTY_ATS]
+
+  # M10_C4 — Auction Purchaser: Sale Certificate Already Issued + Possession Given
+  - rule_id: M10_C4
+    module: M10_THIRD_PARTY
+    statutory_basis: "BOTH"
+    description: "Sale confirmed and possession given — Celir LLP high threshold to set aside applies"
+    preconditions:
+      - field: sale_certificate_issued
+        operator: eq
+        value: true
+      - field: possession_given_to_auction_purchaser
+        operator: eq
+        value: true
+    checks:
+      - check_id: M10_C4_a
+        expression: "sale_certificate_issued == True and possession_given_to_auction_purchaser == True"
+        result_if_true: REVIEW
+        severity: HIGH
+        message_template: "Sale certificate issued on {sale_certificate_date} and physical possession given to auction purchaser. The Supreme Court in Celir LLP v. Bafna Motors (2023) 13 SCC 561 held that once a sale is confirmed and possession given, the borrower's right of redemption under TPA Section 60 is extinguished. To set aside the sale at this stage requires: (1) fundamental procedural error in the auction itself, OR (2) the sale was obtained by fraud or misrepresentation. The standard for setting aside rises significantly after physical possession. Check rules M3_C6 (notice affixing), M3_C7 (auction during stay), and M3_C8 (concealment) — if any of these fire, the fundamental procedural error threshold may be met."
+        judgment_tags: [celir_llp_bafna_motors, confirmed_sale_high_threshold]
+        ground_codes: [AUCTION_PURCHASER, RIGHT_OF_REDEMPTION]
+
+  # M10_C5 — Sale Confirmed But Pre-Possession (lower threshold)
+  - rule_id: M10_C5
+    module: M10_THIRD_PARTY
+    statutory_basis: "BOTH"
+    description: "Sale certificate issued but possession not yet given — right of redemption window may remain open"
+    preconditions:
+      - field: sale_certificate_issued
+        operator: eq
+        value: true
+      - field: possession_given_to_auction_purchaser
+        operator: eq
+        value: false
+    checks:
+      - check_id: M10_C5_a
+        expression: "sale_certificate_issued == True and possession_given_to_auction_purchaser == False"
+        result_if_true: REVIEW
+        severity: CURABLE
+        message_template: "Sale certificate issued but physical possession not yet given to auction purchaser. The right of redemption under TPA Section 60 may not yet be fully extinguished at this stage. The borrower/applicant has a window to challenge the sale through DRT before possession is handed over. Procedural defects (M3_C6, M3_C7, M3_C8) if present are more readily actionable at this stage than post-possession."
+        judgment_tags: [celir_llp_bafna_motors, pre_possession_redemption_window]
+        ground_codes: [RIGHT_OF_REDEMPTION, AUCTION_PURCHASER]
+
+  # M10_C6 — Second SA: Different Cause of Action (Oasis Dealcom)
+  - rule_id: M10_C6
+    module: M10_THIRD_PARTY
+    statutory_basis: "ACT"
+    description: "Second SA maintainable where cause of action differs from first SA"
+    preconditions:
+      - field: previous_sa_filed
+        operator: eq
+        value: true
+      - field: challenges_auction
+        operator: eq
+        value: true
+    checks:
+      - check_id: M10_C6_a
+        expression: "previous_sa_filed == True and challenges_auction == True and challenges_demand_notice == False"
+        result_if_true: PASS
+        severity: ADVISORY
+        message_template: "A previous SA ({previous_sa_number}) was filed by the same applicant. The present SA challenges the auction and/or sale certificate — a distinct cause of action from the original SA's challenge. The Supreme Court in Oasis Dealcom Pvt. Ltd. v. Khazana Dealcomm (2016) 10 SCC 214 held that a second SA is maintainable under Section 17 where the cause of action is different. The fresh auction constitutes a fresh cause of action. Bank may contest maintainability but the Oasis Dealcom principle should be cited in rebuttal."
+        judgment_tags: [oasis_dealcom, second_sa_fresh_cause]
+        ground_codes: [SECOND_SA_FRESH_CAUSE]
+
+  # M10_C7 — Rule 9(4): balance consideration not paid within 90 days
+  # Authority: Rule 9(4) Security Interest (Enforcement) Rules 2002
+  - rule_id: M10_C7
+    module: M10_THIRD_PARTY
+    statutory_basis: "RULES"
+    description: "Auction purchaser must pay balance consideration within 90 days of sale — sale does not attain statutory finality otherwise"
+    preconditions:
+      - field: sale_certificate_issued
+        operator: eq
+        value: true
+      - field: balance_consideration_paid_within_90_days
+        operator: is_not_null
+    checks:
+      - check_id: M10_C7_a
+        expression: "balance_consideration_paid_within_90_days == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Auction purchaser paid balance consideration on {balance_payment_date}, after the 90-day outer limit prescribed by Rule 9(4) of the Security Interest (Enforcement) Rules 2002 (auction date: {auction_date}). The sale did not attain statutory finality within the mandatory timeline. The borrower's right of redemption was not extinguished because the statutory conditions for vesting of title were never fulfilled."
+        judgment_tags: [e_muthurathinasabathy, mathew_varghese, rule_9_4]
+        ground_codes: [AUCTION_PURCHASER, RIGHT_OF_REDEMPTION]
+    pass_message_template: "Balance consideration paid within the 90-day limit prescribed by Rule 9(4)."

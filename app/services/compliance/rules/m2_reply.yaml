@@ -1,0 +1,54 @@
+rules:
+  - rule_id: M2_C1
+    module: M2_REPLY_COMPLIANCE
+    statutory_basis: "Section 13(3A) SARFAESI Act 2002"
+    description: "Bank must reply to objection — reply not given"
+    preconditions:
+      - field: objection_filed
+        operator: eq
+        value: true
+    checks:
+      - check_id: M2_C1_a
+        expression: "bank_reply_given == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Borrower filed objection on {objection_date}. Bank has not replied. Fatal under Kanaiyalal (2011) 2 SCC 782."
+        judgment_tags: [s13_3a_reply, borrower_rights, fatal_defect]
+    pass_message_template: "Bank replied on {bank_reply_date}."
+
+  - rule_id: M2_C2
+    module: M2_REPLY_COMPLIANCE
+    description: "Bank reply must be within 15 days"
+    preconditions:
+      - field: objection_filed
+        operator: eq
+        value: true
+      - field: bank_reply_given
+        operator: eq
+        value: true
+    checks:
+      - check_id: M2_C2_a
+        expression: "reply_days_elapsed > 15"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Bank replied {reply_days_elapsed} days after objection. Exceeds 15-day limit."
+        judgment_tags: [s13_3a_reply, late_reply]
+
+  # NEW v5.1 — M2_C3: Bank Reply Reasoned
+  - rule_id: M2_C3
+    module: M2_REPLY_COMPLIANCE
+    statutory_basis: "Reasoned Reply Requirement"
+    description: "Bank reply must give reasons for rejecting the objection"
+    preconditions:
+      - field: bank_reply_given
+        operator: eq
+        value: true
+    checks:
+      - check_id: M2_C3_a
+        description: "Bank reply does not give reasons"
+        expression: "bank_reply_gives_reasons == False"
+        result_if_true: FAIL
+        severity: CURABLE
+        message_template: "Bank reply is not reasoned. DRT may set aside notice or require proper reply depending on forum."
+        judgment_tags: [s13_3a_reply_unreasoned]
+    pass_message_template: "Bank provided a reasoned reply."

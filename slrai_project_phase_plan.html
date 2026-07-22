@@ -1,0 +1,344 @@
+
+<style>
+  h2.sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0; }
+  * { box-sizing:border-box; }
+  body, div, span, p { margin:0;padding:0; }
+
+  .header { padding:2rem 1.5rem 1rem; }
+  .header h1 { font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px; }
+  .header p { font-size:14px;color:var(--color-text-secondary); }
+
+  .legend { display:flex;flex-wrap:wrap;gap:10px;padding:0 1.5rem 1.5rem; }
+  .legend-item { display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary); }
+  .dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+
+  .timeline { padding:0 1.5rem 2rem; }
+
+  .phase { border:0.5px solid var(--color-border-tertiary);border-radius:12px;margin-bottom:12px;overflow:hidden; }
+  .phase-header { display:flex;align-items:stretch;gap:0;cursor:pointer; }
+  .phase-num { width:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;border-right:0.5px solid var(--color-border-tertiary); }
+  .phase-meta { flex:1;padding:14px 16px; }
+  .phase-title { font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px; }
+  .phase-subtitle { font-size:12px;color:var(--color-text-secondary); }
+  .phase-tags { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
+  .tag { font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px; }
+  .tag-h { background:#E6F1FB;color:#185FA5; }
+  .tag-k { background:#EAF3DE;color:#3B6D11; }
+  .tag-hs { background:#FAEEDA;color:#854F0B; }
+  .tag-all { background:#EEEDFE;color:#3C3489; }
+  .chevron { width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);transition:transform .2s;font-size:14px; }
+  .chevron.open { transform:rotate(180deg); }
+
+  .phase-body { display:none;border-top:0.5px solid var(--color-border-tertiary);padding:16px; }
+  .phase-body.open { display:block; }
+
+  .week-badge { display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-secondary);margin-bottom:12px; }
+  .gate { font-size:12px;font-weight:500;color:var(--color-text-warning);background:var(--color-background-warning);padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:14px; }
+
+  .person-block { margin-bottom:14px; }
+  .person-label { display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;margin-bottom:6px; }
+  .person-dot { width:8px;height:8px;border-radius:50%; }
+  .dot-h { background:#378ADD; }
+  .dot-k { background:#639922; }
+  .dot-hs { background:#BA7517; }
+  .task-list { list-style:none;padding:0;margin:0; }
+  .task-list li { font-size:13px;color:var(--color-text-secondary);padding:4px 0 4px 16px;border-bottom:0.5px solid var(--color-border-tertiary);position:relative;line-height:1.5; }
+  .task-list li:last-child { border-bottom:none; }
+  .task-list li::before { content:"→";position:absolute;left:0;color:var(--color-text-tertiary);font-size:11px;top:6px; }
+
+  .deliverables { background:var(--color-background-secondary);border-radius:8px;padding:12px;margin-top:8px; }
+  .deliverables-label { font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px; }
+  .del-list { display:flex;flex-wrap:wrap;gap:6px; }
+  .del-chip { font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-primary);background:var(--color-background-primary); }
+
+  .phase-num.bg-p { background:#E6F1FB;color:#185FA5; }
+  .phase-num.bg-g { background:#EAF3DE;color:#3B6D11; }
+  .phase-num.bg-a { background:#FAEEDA;color:#854F0B; }
+  .phase-num.bg-t { background:#EEEDFE;color:#3C3489; }
+
+  .progress-bar { height:4px;background:var(--color-border-tertiary);border-radius:2px;margin:6px 0 0; }
+  .progress-fill { height:4px;border-radius:2px; }
+</style>
+
+<h2 class="sr-only">SLRAI Project Phase Plan — Team Assignments and Deliverables</h2>
+
+<div class="header">
+  <h1>SLRAI — Project Phase Plan</h1>
+  <p>15 phases · 8–12 weeks intensive · Team: Haragam (backend/AI/DevOps), Karan (frontend/integration), Harasis (legal/research/presentation)</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:#378ADD"></div> Haragam (Backend · AI · DevOps)</div>
+  <div class="legend-item"><div class="dot" style="background:#639922"></div> Karan (Frontend · Integration)</div>
+  <div class="legend-item"><div class="dot" style="background:#BA7517"></div> Harasis (Legal · Research · Presentation)</div>
+  <div class="legend-item"><div class="dot" style="background:#7F77DD"></div> All team</div>
+</div>
+
+<div class="timeline" id="phases"></div>
+
+<script>
+const phases = [
+  {
+    num: "00",
+    color: "bg-t",
+    title: "Project Kickoff & Legal Foundation",
+    subtitle: "Setup, fixture acquisition, legal grounding — before one line of code",
+    week: "Week 0–1",
+    gate: "Gate: 5 anonymised SA PDFs acquired, ground-truth JSON signed by lawyer, all credentials in .env",
+    tags: ["all"],
+    haragam: ["Scaffold exact folder structure from blueprint Section 2", "Set up GitHub repo with branch protection, .gitignore, README skeleton", "Stand up docker-compose stack locally (PostgreSQL, Redis, Qdrant, MinIO)", "Generate JWT secret, obtain Azure OCR key, Anthropic API key — fill .env.example", "Verify all services start cleanly with docker-compose up"],
+    karan: ["Set up frontend repo (Next.js 14 recommended — App Router, TypeScript, Tailwind)", "Configure ESLint, Prettier, shadcn/ui base install", "Create basic folder structure: /app, /components, /lib, /types", "Document API base URL and auth flow in team shared doc"],
+    harasis: ["Acquire 5 anonymised SARFAESI Application PDFs per Section 23 guide", "Engage SARFAESI advocate — get ground-truth verdict JSON signed off for each fixture", "Read SARFAESI Act Sections 13, 17, Security Interest Enforcement Rules 2002", "Compile landmark DRT/High Court judgments relevant to M1–M9 modules", "Prepare project overview slide deck for internal alignment"],
+    deliverables: ["5 fixture PDFs + 5 ground-truth JSONs", "docker-compose stack running", "Team shared doc (API schema, auth flow, timeline)", "Slide deck v1"]
+  },
+  {
+    num: "01",
+    color: "bg-p",
+    title: "Infrastructure & Auth Backend",
+    subtitle: "Database, Alembic migrations, JWT auth, RBAC, S3 storage service",
+    week: "Week 1",
+    gate: "Gate: POST /auth/login returns JWT; GET /api/v1/cases returns 401 without token",
+    tags: ["h"],
+    haragam: ["Implement all SQLAlchemy ORM models from Section 8 schema", "Run Alembic autogenerate to create 0001_initial_schema.py migration", "Implement app/config.py with pydantic-settings — all env vars validated on startup", "Implement JWT auth: POST /auth/login, POST /auth/refresh (Section 9)", "Implement get_current_user and require_role dependencies", "Implement storage.py: S3 upload/download/hash using boto3 (MinIO locally)"],
+    karan: ["Build Login page UI: email/password form, JWT stored in httpOnly cookie or memory", "Build AuthContext / useAuth hook — wraps all API calls with Bearer token", "Set up Axios/fetch interceptor: auto-attach token, redirect to /login on 401", "Create placeholder skeleton for main dashboard layout (sidebar nav, header, content area)"],
+    harasis: ["Read RBI Master Circular on NPA Classification (M8 basis)", "Read MSMED Act 2006 + RBI MSME circulars (M9 basis)", "Start compiling judgments list: case name, citation, what rule it supports, module relevance", "Review ground-truth JSONs with advocate — confirm verdict expectations are legally sound"],
+    deliverables: ["Working JWT auth API", "Login UI with auth flow", "NPA + MSME legal notes doc", "Judgments list (draft)"]
+  },
+  {
+    num: "02",
+    color: "bg-p",
+    title: "Case & Document API",
+    subtitle: "Case CRUD, document upload, pre-intake filters, Celery worker scaffold",
+    week: "Week 1–2",
+    gate: "Gate: POST /cases with valid payload runs F1–F4 filters; POST /cases/{id}/documents uploads to MinIO and returns SHA-256 hash",
+    tags: ["h"],
+    haragam: ["Implement cases.py router: POST /cases, GET /cases, GET /cases/{id}, PATCH /cases/{id}", "Implement pre_intake.py: filters F1 (asset class), F2 (debt threshold), F3 (SA act scope), F4 (IBC moratorium flag)", "Implement documents.py router: POST /cases/{id}/documents (multipart upload)", "Implement Celery app config (celery_app.py) — broker Redis, result backend Redis", "Implement Chain A scaffold in chain_a.py (tasks stubbed, not yet functional)", "Write pytest fixtures in conftest.py: test DB, test client, factory-boy case factory"],
+    karan: ["Build Cases list page: table with status badges, pagination, search/filter bar", "Build New Case form: all fields from CaseFactSchema intake fields, client-side validation", "Build Document upload component: drag-and-drop, progress bar, SHA-256 display", "Connect all forms to real API endpoints with error handling"],
+    harasis: ["Verify pre-intake filter logic against SARFAESI Act scope (Section 2 definitions)", "Compile IBC Section 14 moratorium notes — when does it apply, how to detect in SA docs", "Review fixture SA PDFs: annotate which pre-intake filter each would trigger/pass", "Update advocate on F1–F4 logic — get sign-off that filter definitions are legally correct"],
+    deliverables: ["Working case + document API", "Cases UI with upload", "Pre-intake legal notes", "Advocate sign-off on F1–F4"]
+  },
+  {
+    num: "03",
+    color: "bg-p",
+    title: "OCR & Translation Pipeline",
+    subtitle: "Azure Document Intelligence integration, IndicTrans2 Hindi→English, layout parsing",
+    week: "Week 2",
+    gate: "Gate: 5 fixture PDFs processed through OCR → layout_parser → indictrans2; all yield structured paragraph JSON with language tags",
+    tags: ["h"],
+    haragam: ["Implement azure_ocr.py: Azure Document Intelligence prebuilt-layout, paragraph extraction with bbox", "Implement layout_parser.py: paragraph list with page number, language_detected, bbox, is_heading heuristic", "Implement indictrans.py: IndicTrans2 model wrapper, batch translate Hindi paragraphs to English, returns translated + original pairs", "Implement doc_classifier.py: keyword-rule classifier — use blueprint Section 11.4 DOC_TYPE_KEYWORDS exactly (14 types, not 6)", "Wire all OCR + translation into Chain A Step 1 Celery task", "Run all 5 fixture PDFs manually — inspect output paragraph JSON"],
+    karan: ["Build Pipeline Status component: real-time polling of /cases/{id}/pipeline, animated step indicators (OCR, Extraction, Compliance, Scoring)", "Build Document viewer: PDF embed or page-by-page image viewer, shows extracted paragraphs highlighted with bboxes", "Handle loading/error states for long-running pipeline steps"],
+    harasis: ["Test OCR output on Hindi/English fixture PDFs — flag any mistranslations that would affect legal meaning", "Specifically review: date formats in Hindi, rupee amounts, section references — ensure OCR+translation preserves them accurately", "Document known OCR failure patterns for advocate review (blurry stamps, handwritten annotations, vernacular section numbering)"],
+    deliverables: ["OCR+translation pipeline working on all 5 fixtures", "Pipeline status UI", "OCR quality review doc", "Known failure patterns log"]
+  },
+  {
+    num: "04",
+    color: "bg-p",
+    title: "NLP Extraction Engine",
+    subtitle: "Regex layer A, Claude API layer B, confidence router, workbench queue",
+    week: "Week 2–3",
+    gate: "Gate: regex layer extracts ≥60% of CaseFactSchema fields from English fixtures; Claude layer fills remainder; all fields land in extraction_results table",
+    tags: ["h"],
+    haragam: ["Implement regex_layer.py: deterministic patterns for all date fields, amounts, section references, party names from Section 12", "Implement nlp_layer.py: Claude API structured extraction — prompt uses CaseFactSchema as JSON schema, temperature=0, processes remaining low-confidence fields", "Implement confidence_router.py: score each field extraction, route HIGH→auto-accept, LOW→workbench queue", "Implement workbench.py router: GET /cases/{id}/workbench (pending fields), PATCH /cases/{id}/workbench/confirm (human confirm)", "Wire into Chain A Step 2 Celery task", "Write test_extraction/test_regex.py and test_nlp.py against 5 fixtures"],
+    karan: ["Build Workbench UI: list of pending fields needing human review, shows extracted text snippet + source paragraph, confirm/reject/edit action per field", "Build Field Evidence Panel: clicking a field shows the source paragraph with highlight, page number, OCR confidence", "Implement real-time workbench badge count in sidebar (shows N pending fields)"],
+    harasis: ["Review extraction output for M1 fields on 3 fixtures: demand_notice_date, notice_service_mode, notice_dispatch_proof_present — compare to ground-truth JSON", "Flag any fields where regex pattern misread legal formatting (e.g. dates written as 'twenty-third day of March 2022')", "Begin reading Section 13(2), 13(3A) SARFAESI in detail for M1/M2 module verification next phase"],
+    deliverables: ["Extraction engine (regex + Claude) running on all fixtures", "Workbench API + UI", "Extraction accuracy report vs ground truth", "Legal review notes for M1/M2 fields"]
+  },
+  {
+    num: "05",
+    color: "bg-p",
+    title: "YAML Rule Engine Core",
+    subtitle: "Rule interpreter, simpleeval integration, UNKNOWN/SILENCE protocol, M1+M2 modules",
+    week: "Week 3",
+    gate: "Gate: M1 + M2 rule engine achieves 100% verdict agreement with ground-truth JSONs on all applicable fixtures (pytest test_rules/test_m1.py passes)",
+    tags: ["h"],
+    haragam: ["Implement compliance/engine.py: YAML rule interpreter using simpleeval, _get_confirmed_value with UNKNOWN/SILENCE protocol from Section 22", "Implement M1 rules YAML (m1_demand.yaml): all 7 checks M1_C1–M1_C7 per Section 14", "Implement M2 rules YAML (m2_reply.yaml): M2_C1–M2_C2", "Implement pre_intake.py filters (F1–F4) wired to engine", "Write test_rules/test_m1.py and test_m2.py: compare engine output against 5 fixture ground-truth JSONs", "Ensure FATAL/CURABLE/ABSOLUTE_BAR/UNKNOWN severity classes render correctly"],
+    karan: ["Build Compliance Results UI: module-by-module accordion, each rule check shown with PASS/FAIL/UNKNOWN badge, severity chip, message", "Implement colour coding: FATAL = red, CURABLE = amber, ABSOLUTE_BAR = deep red, PASS = green, UNKNOWN = grey", "Build Print-preview toggle: hides UI chrome, shows report-style layout for screenshotting"],
+    harasis: ["Deep-read Section 13(2) demand notice requirements — verify M1_C1 (60-day period), M1_C2 (amount accuracy), M1_C3 (service mode list), M1_C4 (dispatch proof)", "Deep-read Section 13(3A) reply requirement — verify M2_C1/C2 logic against Act language", "Review M1/M2 engine results on fixtures — confirm with advocate whether PASS/FAIL verdicts are legally sound", "Prepare M1/M2 legal explanation slides for pitch deck"],
+    deliverables: ["M1+M2 rule engine at 100% accuracy on fixtures", "Compliance results UI", "M1/M2 legal sign-off from advocate", "Pitch deck M1/M2 slides"]
+  },
+  {
+    num: "06",
+    color: "bg-p",
+    title: "Rule Engine — Remaining Modules",
+    subtitle: "M3 through M9 YAML rules — auction, limitation, tenancy, valuation, multi-party, NPA, MSME",
+    week: "Week 3–4",
+    gate: "Gate: All 9 modules achieve 100% verdict agreement on applicable fixtures. All RuleResult objects have correct status + severity + message.",
+    tags: ["h"],
+    haragam: ["Implement m3_auction.yaml (Rule 8/9 — 30-day gap check, M3_C1–M3_C4)", "Implement m4_limitation.yaml (Section 17 — 45-day bar, M4_C1–M4_C3)", "Implement m5_tenancy.yaml (TPA + Section 17 — lease vs mortgage, M5_C1–M5_C4)", "Implement m6_valuation.yaml (Rule 8(6) — valuer empanelment, age, reserve price, M6_C1–M6_C4)", "Implement m7_multiparty.yaml (Section 13(2) — all co-borrowers served, M7_C1–M7_C2)", "Implement m8_npa.yaml (RBI 90-day — NPA classification check, M8_C1–M8_C4)", "Implement m9_msme.yaml (MSMED Act — Udyam cert, restructuring, M9_C1–M9_C2)", "Wire all 9 modules into Chain B Step 1 Celery task", "Write test files for M3–M9; run full pytest suite"],
+    karan: ["Extend Compliance Results UI to show all 9 modules with proper grouping", "Add Summary Banner at top of compliance view: total FATAL count, total CURABLE, total UNKNOWN", "Build Module Navigation: sticky left panel listing M1–M9 with colored dot per status, click to jump"],
+    harasis: ["Legal review of M3 (auction notice gap — Rule 8/9 Enforcement Rules), M4 (limitation — Section 17), M5 (tenancy — TPA + SARFAESI)", "Legal review of M6 (valuation — Rule 8(6) + RBI guidelines), M7 (multi-party notice), M8 (NPA — RBI Master Circular)", "Collect and summarise 2 landmark judgments per module (M3–M9) — brief one-paragraph note per judgment on what it decided and which rule it supports", "Get advocate sign-off on M3–M9 verdict logic — document any corrections"],
+    deliverables: ["All 9 modules in rule engine, 100% accuracy gate passed", "Full compliance UI (M1–M9)", "M3–M9 landmark judgments notes", "Advocate sign-off sheet for all modules"]
+  },
+  {
+    num: "07",
+    color: "bg-p",
+    title: "Judgment Intelligence Engine",
+    subtitle: "InLegalBERT embeddings, Qdrant vector store, fact-graph applicability matching, precedence resolver",
+    week: "Week 4–5",
+    gate: "Gate: Given a fixture case, the system retrieves top-5 relevant judgments and correctly rejects judgments where fact conditions don't match (test_applicability.py passes)",
+    tags: ["h"],
+    haragam: ["Set up Qdrant collection with InLegalBERT 768-dim embeddings (Section 15)", "Ingest initial judgment corpus: minimum 20 judgments across M1–M9 modules, with metadata (module, conditions_required, binding_level, court_tier)", "Implement retrieval.py: Qdrant vector search with metadata pre-filter by module", "Implement applicability.py: fact-graph condition matching — judgment only applies if ALL required_facts conditions are met from CaseFactSchema", "Implement precedence.py: conflict resolver — High Court > DRT, binding > persuasive, more recent wins on equal tier", "Wire into Chain B Step 2 Celery task", "Write test_judgments/test_applicability.py"],
+    karan: ["Build Judgment Panel UI: shows applicable judgments per module, court name + citation + relevance reason + link to full text", "Implement 'Why this judgment applies' expandable section: shows which fact conditions matched", "Add judgment count badges to module rows in compliance view"],
+    harasis: ["Source 20+ SARFAESI judgments with full citations: compile from Indian Kanoon, DRT Reporter, bank's own legal team", "For each judgment: extract binding level (Supreme Court/High Court/DRT), key holding, which M1–M9 module it applies to, what factual conditions it requires", "Verify judgment corpus with advocate — confirm no overruled or mischaracterised judgments", "Prepare judgment intelligence slides for pitch deck (3–4 slides showing how system matches facts to precedent)"],
+    deliverables: ["Judgment corpus (20+ judgments) in Qdrant", "Applicability engine working", "Judgment Panel UI", "Judgment corpus verified by advocate", "Pitch deck judgment slides"]
+  },
+  {
+    num: "08",
+    color: "bg-p",
+    title: "Scoring & Recommendation Engine",
+    subtitle: "Ground strength scoring per borrower ground, bank compliance score, final recommendation matrix",
+    week: "Week 5",
+    gate: "Gate: Scoring engine produces directionally correct ground_strength scores on ≥4 of 5 fixtures (spot-checked by Harasis + advocate)",
+    tags: ["h"],
+    haragam: ["Implement ground_strength.py: per-ground borrower score (0–100), weighted by severity, judgment count, extraction confidence (Section 16)", "Implement compliance_score.py: bank procedural score — PASS rules add points, FATAL/CURABLE deduct, UNKNOWN hold", "Implement recommendation.py: matrix lookup → SETTLE / CONTEST / EXPEDITE_CURE / SEEK_STAY / REFER_LAWYER", "Wire into Chain B Step 3 Celery task", "Write test_scoring/test_ground_strength.py"],
+    karan: ["Build Scoring Dashboard: circular progress gauges for ground strength per module, overall bank compliance score meter", "Build Recommendation Banner: prominent display of final recommendation with icon, one-line rationale, and expandable breakdown", "Build Ground vs Bank comparison view: side-by-side bars per module"],
+    harasis: ["Review scoring logic for legal reasonableness: does a FATAL check in M1 correctly dominate the score? Does UNKNOWN correctly depress it?", "Spot-check all 5 fixture scores against your manual assessment — flag any directional errors to Haragam", "Write 2-page 'How We Score' explainer for bank audience: plain language, no jargon, what each number means commercially"],
+    deliverables: ["Scoring engine working on all fixtures", "Scoring dashboard UI", "Score accuracy spot-check report", "'How We Score' explainer doc"]
+  },
+  {
+    num: "09",
+    color: "bg-p",
+    title: "PDF Report Generation",
+    subtitle: "WeasyPrint PDF engine, Jinja2 report template, Chain B completion, report download API",
+    week: "Week 5–6",
+    gate: "Gate: Full pipeline (upload → workbench confirm → report) completes in <5 minutes for a 30-page SA PDF; report PDF passes legal safety check by Harasis + advocate",
+    tags: ["h"],
+    haragam: ["Implement generator.py: WeasyPrint HTML→PDF renderer, context builder from all engine outputs", "Build report.html.j2 Jinja2 template: executive summary, per-module compliance verdict table, ground strength scores, applicable judgments, recommendation, disclaimer", "Implement reports.py router: GET /cases/{id}/reports (list), POST /cases/{id}/reports/generate, GET /cases/{id}/reports/{rid}/download", "Complete Chain B wiring: workbench confirm → compliance engine → judgment engine → scoring → report generation", "Performance test on 30-page SA: target <5 min end-to-end", "Implement Chain A and Chain B error states: FAILED status, error_message stored in DB"],
+    karan: ["Build Report Download UI: generated reports list with timestamp + status, download button, regenerate button", "Build Report Preview: embedded PDF viewer in browser (iframe or react-pdf)", "Implement progress notification: toast/banner when pipeline completes or fails"],
+    harasis: ["Review generated PDF report for all 5 fixtures with advocate", "Verify legal safety check (Section 21 criterion 4): no statement in report can be construed as legal advice", "Check that all UNKNOWN fields surface correct 'could not be verified' language — no silent assumptions", "Draft standard disclaimer paragraph for report footer — have advocate sign off on exact wording", "Prepare 'Live Demo' flow script: which 3 fixture cases to show, what to click, what to narrate"],
+    deliverables: ["PDF report generator working", "Report download + preview UI", "Legal safety sign-off on all 5 report PDFs", "Report disclaimer wording approved", "Live demo script v1"]
+  },
+  {
+    num: "10",
+    color: "bg-p",
+    title: "End-to-End Integration & Bug Bash",
+    subtitle: "Full pipeline smoke test, Chain A + B integrated, all API edge cases handled",
+    week: "Week 6",
+    gate: "Gate: 3 pre-loaded cases run end-to-end without failure (Section 21 criterion 6 — demo stability check #1)",
+    tags: ["h"],
+    haragam: ["Run all 5 fixture SA PDFs through complete pipeline end-to-end: upload → OCR → extraction → workbench → compliance → scoring → report", "Fix all bugs surfaced in integration run", "Implement all error handling contracts from Section 18: 400/401/403/404/409/422/500 with correct error_code and detail", "Write integration test in tests/: covers full Chain A + Chain B for one fixture", "Implement rate limiting and duplicate upload detection (SHA-256 check)", "Set up structured logging (JSON format) for all pipeline steps"],
+    karan: ["Run full user journey in browser: create case, upload docs, monitor pipeline, review workbench, trigger report, download PDF", "Fix all frontend bugs surfaced during integration", "Implement global error boundary: catch API errors, show user-friendly messages with retry actions", "Ensure all loading states are handled (skeleton screens, spinners, disabled buttons during submission)"],
+    harasis: ["Run the 3 demo cases manually as if you are a bank officer — document every UI confusion, missing label, unclear result", "Verify that the 3 demo case reports are 100% correct legally — this is the pitch material", "Prepare detailed speaker notes for each screen in the demo flow", "Create a 1-page 'What this report tells you' handout for bank audience"],
+    deliverables: ["All 5 fixtures pass full pipeline", "3 demo cases working cleanly", "Integration test suite passing", "Demo speaker notes", "Bank handout doc"]
+  },
+  {
+    num: "11",
+    color: "bg-g",
+    title: "Frontend Polish & UX Refinement",
+    subtitle: "Design system, responsive layout, accessibility, empty states, loading skeletons",
+    week: "Week 6–7",
+    gate: "Gate: Karan signs off that UI is demo-ready; Harasis confirms as bank-officer persona that every screen makes sense without explanation",
+    tags: ["k"],
+    haragam: ["Address all API issues flagged by Karan during frontend polish phase", "Add missing endpoints or response fields if UI needs data not currently exposed", "Implement pagination on GET /cases and GET /cases/{id}/documents"],
+    karan: ["Audit every screen against bank officer persona: labels, terminology, information hierarchy", "Implement full responsive layout (works on 1280px laptop — primary demo device)", "Add empty states: no cases yet, no documents uploaded, pipeline not started", "Add skeleton loading screens on all data-heavy pages", "Implement proper table sorting and column visibility toggle on cases list", "Add keyboard navigation and visible focus rings (accessibility baseline)", "Final typography and spacing pass — ensure consistent use of design tokens"],
+    harasis: ["Review every UI screen as a 'bank officer with no technical background' — flag anything that needs a tooltip or explanatory copy", "Write microcopy for all empty states, error messages, and confirmation dialogs", "Verify all module names and legal terminology shown in UI are accurate (M1 = 'Demand Notice Compliance', not just 'M1')", "Update pitch deck with final screenshots of polished UI"],
+    deliverables: ["Polished, demo-ready frontend", "Accessibility baseline met", "All microcopy reviewed for legal accuracy", "Pitch deck updated with final screenshots"]
+  },
+  {
+    num: "12",
+    color: "bg-a",
+    title: "Legal Research & Pitch Narrative",
+    subtitle: "Full judgment corpus, SARFAESI landscape, commercial framing, objection handling",
+    week: "Week 7",
+    gate: "Gate: Harasis presents pitch narrative to team dry-run; team can answer 10 standard objections from bank compliance officer",
+    tags: ["hs"],
+    haragam: ["Provide Harasis with system architecture one-pager: what the system does technically in plain language", "Assist with any technical questions from the advocate review"],
+    karan: ["Prepare any additional demo screenshots or screen-record clips Harasis needs for the pitch deck"],
+    harasis: ["Compile full judgment corpus: 2 landmark judgments per module (18 total) with full citations, key holdings, relevance to system", "Write SARFAESI landscape section for pitch: market size (how many SARFAESI cases filed per year), typical legal cost per case, time-to-resolution, who are the buyers (banks, ARCs)", "Write commercial value section: what does a FATAL M1 defect cost a bank? What is the value of catching it pre-litigation?", "Draft 10 standard objections a bank compliance officer would raise + team responses", "Build full pitch deck (15–20 slides): problem, solution, demo screenshots, accuracy numbers, legal safety, commercial value, team", "Write speaker script for each slide", "Prepare a 2-minute elevator pitch version"],
+    deliverables: ["Full judgment corpus (18+ judgments)", "SARFAESI market landscape doc", "10 objections + responses doc", "Full pitch deck v1 (15–20 slides)", "Speaker script", "Elevator pitch"]
+  },
+  {
+    num: "13",
+    color: "bg-p",
+    title: "DevOps, Security & Production Readiness",
+    subtitle: "Docker production build, secrets management, HTTPS, monitoring, backup",
+    week: "Week 7–8",
+    gate: "Gate: System runs on a cloud VM (AWS/GCP/Hetzner) with HTTPS; docker-compose up boots full stack; logs flow to structured output",
+    tags: ["h"],
+    haragam: ["Build production Dockerfile: multi-stage, non-root user, health checks, pre-downloaded models baked in", "Configure nginx reverse proxy: HTTPS termination, rate limiting, security headers", "Implement secrets management: no secrets in docker-compose.yml, all via .env or secrets manager", "Set up structured JSON logging across all services with correlation IDs", "Implement database backup script: pg_dump to S3 daily", "Set up basic Prometheus + Grafana dashboard: pipeline duration, error rates, task queue depth", "Security audit: SQL injection (SQLAlchemy parameterised queries), auth token expiry, S3 bucket policy", "Deploy to cloud VM — verify all services start, end-to-end pipeline completes"],
+    karan: ["Set up frontend build pipeline: Next.js production build, static optimisation, environment variable injection", "Configure frontend to point at production API URL", "Verify all API calls work over HTTPS in production"],
+    harasis: ["Review data handling practices: where is SA document data stored, is it encrypted, who has access? Prepare 1-page data security statement for bank audience", "Check if any regulatory requirements apply to data stored (RBI data localisation guidelines)", "Prepare technical FAQ for bank IT security team"],
+    deliverables: ["Production Docker stack running on cloud VM", "HTTPS working", "Monitoring dashboard", "Data security statement", "Technical FAQ for bank IT"]
+  },
+  {
+    num: "14",
+    color: "bg-t",
+    title: "Pitch Rehearsal & Final Go/No-Go",
+    subtitle: "Accuracy gate, demo stability, legal safety, full team dry run, sign-off",
+    week: "Week 8",
+    gate: "Gate: ALL six Section 21 criteria met — extraction ≥90%/80%, compliance 100% verdict match, ground strength ≥80% directional, legal safety confirmed, <5 min performance, 3 demo cases stable",
+    tags: ["all"],
+    haragam: ["Run formal Section 21 accuracy gates: 20 test cases extraction accuracy check (≥90% English, ≥80% Hindi/mixed)", "Fix any last bugs from dry run", "Performance test: full 30-page SA pipeline must complete in <5 minutes", "Ensure 3 pre-loaded demo cases are in production database, all reports pre-generated as fallback"],
+    karan: ["Run full demo flow 3 times end-to-end on production URL — document any failures", "Fix all UI bugs surfaced in dry run", "Ensure demo cases have clean state: pipeline complete, reports available, workbench empty", "Prepare backup plan: if live demo fails, have screen recordings of each step ready"],
+    harasis: ["Run formal compliance verdict accuracy gate: 100% match on 20 test cases with advocate", "Run formal ground strength accuracy gate: ≥16/20 directional correctness with advocate sign-off", "Confirm legal safety: advocate reviews 3 demo reports and signs legal safety statement", "Lead team dry-run pitch: present all 15–20 slides, give feedback to each team member on delivery", "Final pitch deck polish based on dry-run feedback", "Prepare physical handouts for bank meeting: 'How We Score' explainer + one demo report printout"],
+    deliverables: ["All 6 Section 21 gates cleared", "Advocate legal safety statement signed", "Final pitch deck", "3 demo cases stable on production", "Physical handouts printed", "Screen recording backup"]
+  }
+];
+
+const tagMap = {
+  h: { label: "Haragam", cls: "tag-h" },
+  k: { label: "Karan", cls: "tag-k" },
+  hs: { label: "Harasis", cls: "tag-hs" },
+  all: { label: "All team", cls: "tag-all" }
+};
+
+const container = document.getElementById('phases');
+
+phases.forEach((p, i) => {
+  const div = document.createElement('div');
+  div.className = 'phase';
+
+  const tagsHtml = p.tags.map(t => `<span class="tag ${tagMap[t].cls}">${tagMap[t].label}</span>`).join('');
+
+  let body = `<div class="week-badge">${p.week}</div>`;
+  if (p.gate) body += `<div class="gate">🔒 ${p.gate}</div>`;
+
+  if (p.haragam && p.haragam.length) {
+    body += `<div class="person-block">
+      <div class="person-label"><div class="person-dot dot-h"></div>Haragam</div>
+      <ul class="task-list">${p.haragam.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>`;
+  }
+  if (p.karan && p.karan.length) {
+    body += `<div class="person-block">
+      <div class="person-label"><div class="person-dot dot-k"></div>Karan</div>
+      <ul class="task-list">${p.karan.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>`;
+  }
+  if (p.harasis && p.harasis.length) {
+    body += `<div class="person-block">
+      <div class="person-label"><div class="person-dot dot-hs"></div>Harasis</div>
+      <ul class="task-list">${p.harasis.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>`;
+  }
+  if (p.deliverables && p.deliverables.length) {
+    body += `<div class="deliverables">
+      <div class="deliverables-label">Deliverables</div>
+      <div class="del-list">${p.deliverables.map(d=>`<span class="del-chip">${d}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  div.innerHTML = `
+    <div class="phase-header" onclick="toggle(${i})">
+      <div class="phase-num ${p.color}">${p.num}</div>
+      <div class="phase-meta">
+        <div class="phase-title">${p.title}</div>
+        <div class="phase-subtitle">${p.subtitle}</div>
+        <div class="phase-tags">${tagsHtml}</div>
+      </div>
+      <div class="chevron" id="chev-${i}">▾</div>
+    </div>
+    <div class="phase-body" id="body-${i}">${body}</div>
+  `;
+  container.appendChild(div);
+});
+
+function toggle(i) {
+  const body = document.getElementById('body-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+toggle(0);
+</script>

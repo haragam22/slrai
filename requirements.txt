@@ -1,0 +1,75 @@
+# requirements.txt
+
+# Web framework
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1                  # v2 — do NOT use v1 syntax anywhere
+pydantic-settings==2.2.1
+
+# Database
+sqlalchemy==2.0.30               # async SQLAlchemy 2.x — not 1.x
+asyncpg==0.29.0                  # async PostgreSQL driver for SQLAlchemy (FastAPI)
+psycopg2-binary==2.9.9            # sync PostgreSQL driver for SQLAlchemy (Celery workers)
+alembic==1.13.1
+
+# Task queue
+celery==5.3.6                    # NOT 5.4.x — breaking task routing changes
+redis==5.0.4
+kombu==5.3.4                     # Celery dependency — pin to avoid conflicts
+
+# Structured logging
+structlog==24.2.0
+
+# OCR — Google Cloud Document AI
+google-cloud-documentai==2.29.2
+pypdf==6.14.2                     # splits statute PDFs into <=30-page chunks (Document AI page cap)
+
+# Claude API
+anthropic==0.56.0
+
+# Translation — IndicTrans2 via HuggingFace
+transformers==4.41.0
+sentencepiece==0.2.0
+sacremoses==0.1.1
+# torch installed separately in Dockerfile via --index-url (CPU wheel, not on PyPI as +cpu)
+
+# Vector DB
+qdrant-client==1.9.1
+
+# Embeddings
+sentence-transformers==3.0.1
+numpy==1.26.4                     # PIN <2 — torch/sentence-transformers .numpy() calls break on numpy 2.x ABI
+scipy==1.12.0                     # PIN <1.13 — scipy>=1.13 requires numpy>=2.0, conflicts with pin above
+
+# Rule engine expression evaluation
+simpleeval==0.9.13               # safe expression evaluator — NOT eval()
+
+# Object storage
+boto3==1.34.0
+botocore==1.34.0
+
+# Report generation
+weasyprint==62.3
+jinja2==3.1.4
+markupsafe==2.1.5
+
+# Auth
+python-jose[cryptography]==3.3.0  # JWT
+passlib[bcrypt]==1.7.4            # password hashing — requires bcrypt<5
+bcrypt==4.0.1                    # passlib 1.7.4 is incompatible with bcrypt 5.x
+email-validator==2.1.1            # required for pydantic EmailStr (auth.py)
+
+# Language detection
+langdetect==1.0.9
+
+# YAML parsing (rule files)
+pyyaml==6.0.1
+
+# Utilities
+python-multipart==0.0.9          # required for FastAPI file uploads
+httpx==0.27.0                    # async HTTP client
+python-dotenv==1.0.1
+
+# Dev / test
+pytest==8.2.0
+factory-boy==3.3.0

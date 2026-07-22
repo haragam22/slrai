@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      secrets:
+        - hf_token
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - ${GCP_ADC_HOST_PATH}:/app/secrets/gcp-adc.json:ro
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+      - minio
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  worker:
+    build:
+      context: .
+      secrets:
+        - hf_token
+    env_file: .env
+    volumes:
+      - ${GCP_ADC_HOST_PATH}:/app/secrets/gcp-adc.json:ro
+    depends_on:
+      - postgres
+      - redis
+    command: celery -A app.tasks.celery_app worker --loglevel=info --concurrency=4 --queues=celery,pipeline
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: slrai
+      POSTGRES_USER: slrai
+      POSTGRES_PASSWORD: slrai_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: qdrant/qdrant:v1.9.1
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrantdata:/qdrant/storage
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - miniodata:/data
+
+volumes:
+  pgdata:
+  qdrantdata:
+  miniodata:
+
+secrets:
+  hf_token:
+    environment: HF_TOKEN

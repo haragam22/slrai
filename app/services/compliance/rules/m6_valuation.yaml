@@ -1,0 +1,58 @@
+rules:
+  - rule_id: M6_C1
+    module: M6_VALUATION
+    statutory_basis: "Rule 8(6) Security Interest (Enforcement) Rules 2002"
+    description: "Valuer must be RBI-empanelled and registered under Registered Valuers Act 2017"
+    preconditions:
+      - field: valuation_report_present
+        operator: eq
+        value: true
+    checks:
+      - check_id: M6_C1_a
+        expression: "valuer_rbi_empanelled == False or valuer_registered_under_rvact == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Valuer '{valuer_name}' does not appear to be RBI-empanelled or registered under RVA 2017. Valuation legally defective."
+        judgment_tags: [valuation_defect, rule_8_6]
+
+  - rule_id: M6_C2
+    module: M6_VALUATION
+    description: "Valuation report must not be more than 6 months old at auction"
+    checks:
+      - check_id: M6_C2_a
+        expression: "valuation_age_at_auction_days > 180"
+        result_if_true: FAIL
+        severity: CURABLE
+        message_template: "Valuation report ({valuation_date}) is {valuation_age_at_auction_days} days old at auction. Exceeds 180-day guideline."
+        judgment_tags: [valuation_defect, stale_valuation]
+
+  - rule_id: M6_C3
+    module: M6_VALUATION
+    description: "Reserve price not to fall below 75% of valuation without second valuation"
+    checks:
+      - check_id: M6_C3_a
+        expression: "reserve_price_vs_valuation_pct < 75"
+        result_if_true: FAIL
+        severity: CURABLE
+        message_template: "Reserve price is {reserve_price_vs_valuation_pct}% of valuation. Significantly below valuation. Borrower may allege undervaluation."
+        judgment_tags: [valuation_dispute, undervaluation]
+
+  # NEW v5.0 — M6_C4: Valuation report must predate sale notice
+  - rule_id: M6_C4
+    module: M6_VALUATION
+    statutory_basis: "Rule 8(5) Security Interest (Enforcement) Rules 2002 — reserve price set from pre-existing valuation"
+    description: "Valuation must be obtained before the sale notice is issued — reserve price derives from valuation"
+    preconditions:
+      - field: valuation_date
+        operator: is_not_null
+      - field: sale_notice_date
+        operator: is_not_null
+    checks:
+      - check_id: M6_C4_a
+        description: "Sale notice issued before or on same date as valuation report"
+        expression: "sale_notice_date <= valuation_date"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Sale notice dated {sale_notice_date} issued on or before valuation report dated {valuation_date}. Reserve price cannot be derived from a valuation that did not yet exist. Sequence of steps under Rule 8(5) violated."
+        judgment_tags: [valuation_defect, rule_8_5, valuation_sequence]
+    pass_message_template: "Valuation report ({valuation_date}) correctly obtained before sale notice ({sale_notice_date})."

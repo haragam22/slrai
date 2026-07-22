@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SLRAI Risk Report — {{ case.borrower_name }}</title>
+<style>
+/* ─── FONTS ───────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@font-face {
+  font-family: 'NotoDevanagari';
+  src: local('Noto Sans Devanagari'), local('NotoSansDevanagari');
+}
+
+/* ─── PAGE ────────────────────────────────────────────────────────── */
+@page {
+  size: A4;
+  margin: 18mm 14mm 22mm 14mm;
+  @bottom-center {
+    content: "CONFIDENTIAL — INTERNAL USE ONLY — Page " counter(page) " of " counter(pages);
+    font-family: 'Inter', sans-serif;
+    font-size: 7pt;
+    color: #9ca3af;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', 'NotoDevanagari', sans-serif;
+  font-size: 9pt;
+  color: #111827;
+  line-height: 1.5;
+  background: #fff;
+}
+
+/* ─── WATERMARK ───────────────────────────────────────────────────── */
+.watermark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 72pt;
+  font-weight: 700;
+  color: rgba(220, 38, 38, 0.05);
+  z-index: -1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ─── PAGE BREAKS ─────────────────────────────────────────────────── */
+.page-break { page-break-after: always; break-after: page; }
+.no-break   { page-break-inside: avoid; break-inside: avoid; }
+
+/* ─── HEADER ──────────────────────────────────────────────────────── */
+.report-header {
+  border-bottom: 2px solid #1e3a5f;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.report-header .platform-name {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #1e3a5f;
+  letter-spacing: 0.5px;
+}
+.report-header .platform-sub {
+  font-size: 7.5pt;
+  color: #6b7280;
+  margin-top: 1px;
+}
+.report-header .meta {
+  text-align: right;
+  font-size: 7.5pt;
+  color: #6b7280;
+}
+.report-header .meta strong { color: #374151; }
+
+/* ─── RECOMMENDATION BANNER ───────────────────────────────────────── */
+.rec-banner {
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  border-left: 5px solid;
+}
+.rec-banner.proceed       { background: #f0fdf4; border-color: #16a34a; }
+.rec-banner.caution       { background: #fffbeb; border-color: #d97706; }
+.rec-banner.do-not        { background: #fef2f2; border-color: #dc2626; }
+.rec-banner.critical      { background: #fff0f0; border-color: #7f1d1d; }
+.rec-banner .rec-label    { font-size: 7pt; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; }
+.rec-banner .rec-title    { font-size: 13pt; font-weight: 700; margin-top: 2px; }
+.rec-banner.proceed .rec-title  { color: #15803d; }
+.rec-banner.caution .rec-title  { color: #b45309; }
+.rec-banner.do-not .rec-title   { color: #b91c1c; }
+.rec-banner.critical .rec-title { color: #7f1d1d; }
+
+/* ─── SCORE DASHBOARD ─────────────────────────────────────────────── */
+.score-dashboard {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.score-card {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.score-card .gauge-label {
+  font-size: 7pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+.score-card .gauge-value {
+  font-size: 22pt;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.score-card .gauge-band {
+  font-size: 7.5pt;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* ─── SUMMARY STATS ROW ───────────────────────────────────────────── */
+.summary-stats {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.stat-box {
+  flex: 1;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.stat-box .stat-label { font-size: 7pt; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-box .stat-value { font-size: 12pt; font-weight: 700; color: #111827; margin-top: 2px; }
+.stat-box .stat-sub   { font-size: 7pt; color: #6b7280; margin-top: 1px; }
+
+/* ─── SECTION HEADINGS ────────────────────────────────────────────── */
+.section-title {
+  font-size: 10pt;
+  font-weight: 700;
+  color: #1e3a5f;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+  margin-top: 16px;
+}
+.section-title:first-of-type { margin-top: 0; }
+
+/* ─── ALERT BOX ───────────────────────────────────────────────────── */
+.alert-box {
+  border: 1px solid #fca5a5;
+  background: #fef2f2;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+.alert-box .alert-header { font-weight: 600; color: #b91c1c; font-size: 8.5pt; }
+.alert-box .alert-body   { color: #374151; font-size: 8pt; margin-top: 2px; }
+
+.warn-box {
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+.warn-box .warn-header { font-weight: 600; color: #92400e; font-size: 8.5pt; }
+.warn-box .warn-body   { color: #374151; font-size: 8pt; margin-top: 2px; }
+
+/* ─── THIRD PARTY / PRAYER CLAUSE (v5.4) ─────────────────────────────── */
+.third-party-notice {
+  background: #fffbeb; border: 1.5px solid #fcd34d;
+  border-radius: 8px; padding: 12px 14px; margin: 8px 0;
+}
+.notice-header { font-size: 9pt; font-weight: 600; color: #92400e; margin-bottom: 4px; }
+.notice-body { font-size: 8pt; color: #92400e; line-height: 1.5; }
+.prayer-summary {
+  background: #f9fafb; border: 0.5px solid #e5e7eb;
+  border-radius: 6px; padding: 8px 12px; margin: 6px 0 10px;
+}
+.prayer-header { font-size: 7.5pt; font-weight: 600; color: #374151; margin-bottom: 6px; }
+.prayer-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.prayer-tag {
+  font-size: 7pt; padding: 1.5px 6px; border-radius: 3px;
+  border: 0.5px solid #d1d5db; color: #374151; background: #f9fafb;
+}
+.prayer-tag.challenged { border-color: #D85A30; color: #D85A30; font-weight: 500; }
+.prayer-tag.interim { border-color: #BA7517; color: #BA7517; }
+.prayer-mismatch-alert {
+  font-size: 7.5pt; color: #92400e; margin-top: 6px;
+  padding: 4px 8px; border-left: 2px solid #fcd34d;
+}
+
+/* ─── RED FLAGS ───────────────────────────────────────────────────── */
+.red-flag-item {
+  display: flex;
+  gap: 10px;
+  border: 1px solid #fca5a5;
+  border-left: 4px solid #dc2626;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: #fef2f2;
+}
+.red-flag-item .flag-module { font-weight: 700; color: #b91c1c; font-size: 8pt; min-width: 90px; }
+.red-flag-item .flag-msg    { font-size: 8pt; color: #374151; }
+.red-flag-item .flag-sev    { font-size: 7pt; font-weight: 600; color: #dc2626; }
+
+/* ─── GROUND TABLE ────────────────────────────────────────────────── */
+table.ground-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+  margin-bottom: 12px;
+}
+table.ground-table th {
+  background: #1e3a5f;
+  color: #fff;
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+table.ground-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: top;
+}
+table.ground-table tr:nth-child(even) td { background: #f9fafb; }
+.score-pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 7.5pt;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ─── MODULE DETAIL ───────────────────────────────────────────────── */
+.module-block {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.module-block .module-header {
+  font-size: 9pt;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-bottom: 6px;
+}
+.rule-row {
+  display: flex;
+  gap: 8px;
+  font-size: 7.5pt;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f3f4f6;
+  align-items: flex-start;
+}
+.rule-row:last-child { border-bottom: none; }
+.rule-status { font-weight: 700; min-width: 36px; }
+.rule-status.pass { color: #16a34a; }
+.rule-status.fail { color: #dc2626; }
+.rule-status.unknown { color: #6b7280; }
+.rule-sev { font-size: 7pt; color: #9ca3af; min-width: 80px; }
+.rule-msg  { color: #374151; flex: 1; }
+
+/* ─── JUDGMENT BLOCK ──────────────────────────────────────────────── */
+.judgment-block {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #1e3a5f;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 8pt;
+}
+.judgment-block.similarity { border-left-color: #d97706; }
+.judgment-block .j-citation { font-weight: 700; color: #1e3a5f; }
+.judgment-block .j-meta     { color: #6b7280; font-size: 7pt; margin-top: 1px; }
+.judgment-block .j-holding  { color: #374151; margin-top: 4px; }
+.judgment-block .j-status   { font-size: 7pt; font-weight: 600; margin-top: 3px; }
+.j-status.applicable   { color: #16a34a; }
+.j-status.partial      { color: #d97706; }
+.j-status.similarity   { color: #9c6e00; }
+
+/* ─── DISCLAIMER ──────────────────────────────────────────────────── */
+.disclaimer {
+  font-size: 6.5pt;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+  margin-top: 12px;
+  line-height: 1.4;
+}
+</style>
+</head>
+<body>
+
+<!-- WATERMARK -->
+<div class="watermark">CONFIDENTIAL</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PAGE 1 — COVER, RECOMMENDATION, SCORES, SUMMARY
+═══════════════════════════════════════════════════════════════════ -->
+
+<!-- HEADER -->
+<div class="report-header">
+  <div>
+    <div class="platform-name">SLRAI</div>
+    <div class="platform-sub">SARFAESI Legal Risk &amp; Auction Intelligence Platform</div>
+  </div>
+  <div class="meta">
+    <div><strong>Report Date:</strong> {{ report_date }}</div>
+    <div><strong>Case Ref:</strong> {{ case.case_ref or '—' }}</div>
+    <div><strong>DRT Case:</strong> {{ case.drt_case_number or '—' }}</div>
+    <div><strong>DRT Bench:</strong> {{ case.drt_bench or '—' }}</div>
+  </div>
+</div>
+
+<!-- CASE META BLOCK -->
+<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:8pt;">
+  <strong style="font-size:10pt;color:#111827;">{{ case.borrower_name }}</strong>
+  <div style="color:#6b7280;margin-top:3px;">
+    Account: {{ case.loan_account_number or '—' }} &nbsp;|&nbsp;
+    Principal: {{ case.principal_amount | currency }} &nbsp;|&nbsp;
+    Property: {{ case.property_description or 'Not specified' }}
+  </div>
+</div>
+
+<!-- RECOMMENDATION BANNER -->
+{% set rec = recommendation | upper if recommendation else '' %}
+{% if rec == 'PROCEED' %}
+<div class="rec-banner proceed">
+{% elif rec == 'PROCEED_WITH_CAUTION' %}
+<div class="rec-banner caution">
+{% elif rec == 'DO_NOT_PROCEED_CRITICAL' %}
+<div class="rec-banner critical">
+{% else %}
+<div class="rec-banner do-not">
+{% endif %}
+  <div class="rec-label">Platform Recommendation</div>
+  <div class="rec-title">{{ recommendation_display }}</div>
+  {% if drt_stay_active %}
+  <div style="font-size:8pt;color:#7f1d1d;margin-top:4px;font-weight:600;">
+    ⚠ DRT interim stay is active — enforcement is stayed. Recommendation overridden to DO_NOT_PROCEED_CRITICAL.
+  </div>
+  {% endif %}
+</div>
+
+<!-- SCORE DASHBOARD -->
+<div class="score-dashboard">
+  <div class="score-card">
+    <div class="gauge-label">Compliance Score</div>
+    <div class="gauge-value" style="color:{{ score_color }};">{{ compliance_score }}%</div>
+    <div class="gauge-band">{{ compliance_band }}</div>
+  </div>
+  <div class="score-card">
+    <div class="gauge-label">Litigation Exposure</div>
+    <div class="gauge-value" style="color:{{ exposure_color }};">{{ (litigation_exposure * 100) | int }}%</div>
+    <div class="gauge-band">{{ exposure_label }}</div>
+  </div>
+  <div class="score-card">
+    <div class="gauge-label">Grounds Raised</div>
+    <div class="gauge-value" style="color:#1e3a5f;">{{ total_grounds }}</div>
+    <div class="gauge-band">{{ grounds_with_precedent }} with precedent</div>
+  </div>
+  <div class="score-card">
+    <div class="gauge-label">Compliance Rules</div>
+    <div class="gauge-value" style="color:#1e3a5f;">{{ compliance_results | length }}</div>
+    <div class="gauge-band">{{ compliance_results | selectattr('status','equalto','PASS') | list | length }} passing</div>
+  </div>
+</div>
+
+<!-- SUMMARY STATS -->
+<div class="summary-stats">
+  <div class="stat-box">
+    <div class="stat-label">Fatal Issues</div>
+    <div class="stat-value" style="color:#dc2626;">
+      {{ compliance_results | selectattr('severity','equalto','FATAL') | list | length }}
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Absolute Bars</div>
+    <div class="stat-value" style="color:#b91c1c;">
+      {{ compliance_results | selectattr('severity','equalto','ABSOLUTE_BAR') | list | length }}
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Curable Defects</div>
+    <div class="stat-value" style="color:#d97706;">
+      {{ compliance_results | selectattr('severity','equalto','CURABLE') | list | length }}
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Coverage Alerts</div>
+    <div class="stat-value" style="color:#d97706;">
+      {{ coverage_alerts | length }}
+    </div>
+  </div>
+</div>
+
+<!-- JUDGMENT COVERAGE ALERTS -->
+{% if coverage_alerts %}
+<div class="section-title">Judgment Coverage Alerts</div>
+{% for alert in coverage_alerts %}
+  {% if alert.severity == 'NO_PRECEDENT' %}
+  <div class="alert-box">
+    <div class="alert-header">NO PRECEDENT — {{ alert.ground_code }}</div>
+    <div class="alert-body">{{ alert.message }}</div>
+  </div>
+  {% else %}
+  <div class="warn-box">
+    <div class="warn-header">UNVERIFIED SIMILARITY — {{ alert.ground_code }}</div>
+    <div class="warn-body">{{ alert.message }}</div>
+  </div>
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+{% if sa_applicant_type != "BORROWER" and sa_applicant_type != "GUARANTOR" %}
+<!-- Third Party Applicant Notice (v5.4) -->
+<div class="third-party-notice">
+  <div class="notice-header">⚠ Third Party SA — {{ sa_applicant_type | replace("_", " ") }}</div>
+  <div class="notice-body">
+    The Securitisation Application has been filed by a party who is
+    <strong>neither the borrower nor the guarantor</strong>.
+    Standard M1-M9 procedural analysis has been run on behalf of the bank.
+    Module M10 (Third Party Rights) provides the primary legal framework
+    for this applicant's claim. DRT will likely raise maintainability
+    as a preliminary issue.
+    {% if sa_applicant_type == "THIRD_PARTY_ATS" %}
+    <br>ATS Advance Paid: Rs. {{ ats_advance_paid | currency }}
+    | ATS Date: {{ ats_date }}
+    | Simultaneous with Mortgage: {{ ats_simultaneous_mortgage }}
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Prayer Clause Summary (v5.4) -->
+<div class="prayer-summary">
+  <div class="prayer-header">SA Prayer Clause — Measures Challenged</div>
+  <div class="prayer-tags">
+    {% if challenges_demand_notice %}
+    <span class="prayer-tag">Section 13(2) Demand Notice</span>
+    {% endif %}
+    {% if challenges_possession_notice %}
+    <span class="prayer-tag">Section 13(4) Possession Notice</span>
+    {% endif %}
+    {% if challenges_sale_notice %}
+    <span class="prayer-tag">Sale Notice / Auction Proclamation</span>
+    {% endif %}
+    {% if challenges_auction %}
+    <span class="prayer-tag challenged">Auction / Sale Certificate</span>
+    {% endif %}
+    {% if challenges_demand_amount %}
+    <span class="prayer-tag">Amount Disputed</span>
+    {% endif %}
+    {% if interim_stay_prayed %}
+    <span class="prayer-tag interim">Interim Stay Prayed
+      {% if interim_stay_granted %} ✓ Granted{% else %} — Pending{% endif %}
+    </span>
+    {% endif %}
+  </div>
+  {% if not prayer_scope_covers_current_measure %}
+  <div class="prayer-mismatch-alert">
+    ⚠ Prayer Scope Mismatch: current enforcement measure not covered
+    by the SA prayer. Bank should raise this as a preliminary objection.
+  </div>
+  {% endif %}
+</div>
+
+<div class="page-break"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PAGE 2 — RED FLAGS & COMPLIANCE MODULES
+═══════════════════════════════════════════════════════════════════ -->
+
+{% if red_flags %}
+<div class="section-title">Critical Red Flags</div>
+{% for flag in red_flags %}
+<div class="red-flag-item no-break">
+  <div>
+    <div class="flag-module">{{ flag.module_display }}</div>
+    <div class="flag-sev">{{ flag.severity_display }}</div>
+  </div>
+  <div class="flag-msg">
+    <strong>{{ flag.rule_id }}</strong> — {{ flag.message or 'No detail provided.' }}
+    {% if flag.statute_text %}
+    <div style="margin-top:3px;color:#9ca3af;font-size:7pt;font-style:italic;">{{ flag.statute_text }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="section-title">Compliance Module Results</div>
+{% for module_key, rules in module_results.items() %}
+<div class="module-block no-break">
+  <div class="module-header">
+    {{ rules[0].module_display }} &nbsp;
+    <span style="font-weight:400;color:#6b7280;font-size:8pt;">
+      ({{ rules | selectattr('status','equalto','PASS') | list | length }}/{{ rules | length }} passing)
+    </span>
+  </div>
+  {% for r in rules %}
+  <div class="rule-row">
+    <div class="rule-status {{ r.status | lower }}">{{ r.status }}</div>
+    <div class="rule-sev">{{ r.severity_display }}</div>
+    <div class="rule-msg">
+      <strong>{{ r.rule_id }}</strong> — {{ r.message or 'No message.' }}
+      {% if r.statute_text %}
+      <div style="color:#9ca3af;font-size:7pt;margin-top:1px;font-style:italic;">{{ r.statute_text }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+
+<div class="page-break"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PAGE 3+ — GROUND SCORES & JUDGMENTS
+═══════════════════════════════════════════════════════════════════ -->
+
+<div class="section-title">Ground-by-Ground Analysis</div>
+
+<table class="ground-table">
+  <thead>
+    <tr>
+      <th style="width:22%;">Ground</th>
+      <th style="width:13%;">Factual Score</th>
+      <th style="width:13%;">Judicial Score</th>
+      <th style="width:14%;">Ground Strength</th>
+      <th style="width:13%;">Corpus (B/Bk)</th>
+      <th style="width:10%;">Confidence</th>
+      <th style="width:15%;">Precedent Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for g in ground_scores %}
+    <tr>
+      <td><strong>{{ g.ground_display }}</strong><br/><span style="color:#9ca3af;font-size:7pt;">{{ g.ground_code }}</span></td>
+      <td>
+        {% if g.factual_score is not none %}
+          <span class="score-pill" style="background:{{ g.strength_color }};">{{ (g.factual_score * 100) | int }}%</span>
+        {% else %}N/A{% endif %}
+      </td>
+      <td>
+        {% if g.judicial_score is not none %}
+          <span class="score-pill" style="background:{{ g.strength_color }};">{{ (g.judicial_score * 100) | int }}%</span>
+        {% else %}N/A{% endif %}
+      </td>
+      <td>
+        {% if g.ground_strength is not none %}
+          <span class="score-pill" style="background:{{ g.strength_color }};">{{ (g.ground_strength * 100) | int }}% — {{ g.strength_label }}</span>
+        {% else %}N/A{% endif %}
+      </td>
+      <td>
+        {% if g.corpus_confidence == "NO_DATA" %}
+          <span style="color:#9ca3af;font-size:8pt;">Corpus statistics not yet available — judgment corpus not loaded.</span>
+        {% else %}
+          <strong>Verified:</strong> {{ g.corpus_borrower_wins }}/{{ g.corpus_bank_wins }}
+          <span style="color:#9ca3af;font-size:7pt;">(of {{ g.corpus_total }})</span><br/>
+          <strong>Full corpus:</strong> {{ g.full_corpus_borrower_wins }}/{{ g.full_corpus_bank_wins }}
+          <span style="color:#9ca3af;font-size:7pt;">(of {{ g.full_corpus_total }})</span>
+        {% endif %}
+      </td>
+      <td>{{ g.corpus_confidence }}</td>
+      <td>{{ g.judgments | length }} judgment(s)</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" style="color:#9ca3af;text-align:center;padding:12px;">No grounds identified.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- PER-GROUND JUDGMENT DETAIL -->
+{% for g in ground_scores %}
+{% if g.judgments %}
+<div class="no-break" style="margin-bottom:14px;">
+  <div style="font-size:9pt;font-weight:700;color:#1e3a5f;margin-bottom:6px;border-bottom:1px dashed #e5e7eb;padding-bottom:4px;">
+    {{ g.ground_display }} — Precedents
+  </div>
+  {% for j in g.judgments %}
+  <div class="judgment-block {% if j.status == 'SIMILARITY_RETRIEVED' %}similarity{% endif %}">
+    <div class="j-citation">{{ j.citation }}</div>
+    <div class="j-meta">{{ j.court }} &nbsp;|&nbsp; {{ 'Favour: ' + j.favor if j.favor else 'Favour: Not Specified' }}</div>
+    {% if j.holding_summary %}
+    <div class="j-holding">{{ j.holding_summary }}</div>
+    {% endif %}
+    <div class="j-status {{ j.status | lower | replace('_retrieved','') }}">
+      {% if j.status == 'APPLICABLE' %}✓ Applicable — Conditions Verified
+      {% elif j.status == 'PARTIAL' %}~ Partially Applicable
+      {% elif j.status == 'SIMILARITY_RETRIEVED' %}⚠ Similarity Retrieved — Conditions NOT Verified
+      {% else %}{{ j.status }}{% endif %}
+    </div>
+    {% if j.reason %}
+    <div style="font-size:7pt;color:#6b7280;margin-top:2px;">{{ j.reason }}</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endfor %}
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>Disclaimer:</strong> {{ disclaimer }}
+</div>
+
+</body>
+</html>

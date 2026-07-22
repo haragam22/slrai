@@ -1,0 +1,136 @@
+rules:
+  - rule_id: M3_C1
+    module: M3_AUCTION_GAP
+    statutory_basis: "Rule 8(6) Security Interest (Enforcement) Rules 2002"
+    description: "30-day gap required between sale notice and auction (immovable)"
+    preconditions:
+      - field: asset_type
+        operator: eq
+        value: immovable
+    checks:
+      - check_id: M3_C1_a
+        expression: "auction_gap_days < 30"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Auction held {auction_gap_days} days after sale notice. Minimum required: 30 days."
+        judgment_tags: [auction_gap, rule_8_6, sale_notice]
+
+  - rule_id: M3_C2
+    module: M3_AUCTION_GAP
+    description: "Newspaper publication of sale notice required"
+    checks:
+      - check_id: M3_C2_a
+        expression: "newspaper_publication_done == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Newspaper publication of sale notice not confirmed in bank records."
+        judgment_tags: [auction_gap, newspaper_publication]
+
+  # NEW v5.0 — M3_C3: Reserve price must be stated in sale notice
+  - rule_id: M3_C3
+    module: M3_AUCTION_GAP
+    statutory_basis: "Rule 8(5) and 8(6) Security Interest (Enforcement) Rules 2002"
+    description: "Sale notice must state the reserve price — which must be set from an approved valuer's report"
+    preconditions:
+      - field: sale_notice_date
+        operator: is_not_null
+    checks:
+      - check_id: M3_C3_a
+        description: "Reserve price absent from sale notice"
+        expression: "reserve_price == None"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Sale notice does not state a reserve price. Rule 8(5) requires the authorised officer to fix reserve price from an approved valuer's report before issuing the sale notice. Auction is procedurally defective."
+        judgment_tags: [auction_gap, rule_8_5, reserve_price_missing]
+    pass_message_template: "Reserve price ({reserve_price}) stated in sale notice as required by Rule 8(5)."
+
+  # NEW v5.0 — M3_C4: Possession must precede sale notice
+  - rule_id: M3_C4
+    module: M3_AUCTION_GAP
+    statutory_basis: "Rule 8 Security Interest (Enforcement) Rules 2002 — possession before sale"
+    description: "Sale notice must not be issued before possession notice — bank cannot auction before taking possession"
+    preconditions:
+      - field: possession_notice_date
+        operator: is_not_null
+      - field: sale_notice_date
+        operator: is_not_null
+    checks:
+      - check_id: M3_C4_a
+        description: "Sale notice predates possession notice"
+        expression: "sale_notice_date < possession_notice_date"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Sale notice dated {sale_notice_date} predates possession notice dated {possession_notice_date}. Bank cannot issue a sale notice before taking possession of the secured asset. Fatal procedural defect under Rule 8."
+        judgment_tags: [auction_gap, possession_before_sale, rule_8]
+    pass_message_template: "Sale notice ({sale_notice_date}) correctly issued after possession notice ({possession_notice_date})."
+
+  # NEW v5.4 — M3_C6: Auction notice not affixed at property
+  # Authority: Rule 8(6)(7), SI Enforcement Rules 2002
+  # SC: Mathew Varghese v. M. Amritha Kumar (2014) 5 SCC 610
+  # SC: Vasu P. Shetty v. Hotel Vandana Palace (2014) 6 SCC 660
+  - rule_id: M3_C6
+    module: M3_AUCTION_GAP
+    statutory_basis: "Rule 8(6)(7) Security Interest (Enforcement) Rules 2002"
+    description: "Auction/sale notice must be affixed at a conspicuous part of the secured property"
+    preconditions:
+      - field: auction_date
+        operator: is_not_null
+      - field: auction_notice_affixed_on_property
+        operator: is_not_null
+    checks:
+      - check_id: M3_C6_a
+        description: "Auction notice not affixed at property"
+        expression: "auction_notice_affixed_on_property == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Rule 8(6)(7) of Security Interest (Enforcement) Rules 2002 violated. The bank did not affix the auction/sale notice at a conspicuous part of the secured property before conducting the auction on {auction_date}. The Supreme Court in Mathew Varghese v. M. Amritha Kumar (2014) 5 SCC 610 held that non-compliance with mandatory affixing requirement renders the sale null and void."
+        judgment_tags: [mathew_varghese, vasu_shetty, rule_8_6_7, notice_affixing]
+        ground_codes: [AUCTION_NOTICE_AFFIXING]
+    pass_message_template: "Auction notice was affixed at the secured property prior to auction on {auction_date}, as required by Rule 8(6)(7)."
+
+  # NEW v5.4 — M3_C7: Auction conducted during court/DRT stay — ABSOLUTE_BAR
+  # Authority: Section 17(4) SARFAESI Act — DRT power to grant stay
+  # SC: Celir LLP v. Bafna Motors (2023) 13 SCC 561
+  - rule_id: M3_C7
+    module: M3_AUCTION_GAP
+    statutory_basis: "Section 17(4) SARFAESI Act 2002"
+    description: "Auction must not be conducted while a DRT/court interim stay is operational"
+    preconditions:
+      - field: auction_conducted_despite_stay
+        operator: is_not_null
+      - field: stay_was_operational_on_auction_date
+        operator: is_not_null
+    checks:
+      - check_id: M3_C7_a
+        description: "Auction conducted in defiance of an operational stay"
+        expression: "auction_conducted_despite_stay == True and stay_was_operational_on_auction_date == True"
+        result_if_true: FAIL
+        severity: ABSOLUTE_BAR
+        message_template: "Auction was conducted on {auction_date} in express defiance of a DRT/court interim stay order passed on {drt_stay_order_date} under Section 17(4) of the SARFAESI Act. Conducting an auction in contempt of a court order is not a procedural defect — it is a jurisdictional violation that cannot be cured. The sale certificate dated {sale_certificate_date} is prima facie void. Celir LLP v. Bafna Motors (2023) 13 SCC 561 affirms that fundamental procedural errors and fraud ground setting aside of a confirmed sale."
+        judgment_tags: [celir_llp_bafna_motors, auction_during_stay, section_17_4]
+        ground_codes: [AUCTION_DURING_STAY]
+    pass_message_template: "No evidence that the auction on {auction_date} was conducted during an operational stay."
+
+  # NEW v5.4 — M3_C8: Pending litigation concealed from auction notice
+  # Authority: Rule 8(6)(7)(a), SI Enforcement Rules 2002
+  # HC: Rakesh Kumar Kaushal v. State of UP (Allahabad HC)
+  # HC: M. Rajendran v. Corporation Bank, Villupuram (Madras HC)
+  - rule_id: M3_C8
+    module: M3_AUCTION_GAP
+    statutory_basis: "Rule 8(6)(7)(a) Security Interest (Enforcement) Rules 2002"
+    description: "Bank must disclose pending litigation known to it in the auction notice"
+    preconditions:
+      - field: pending_sa_existed_at_auction_date
+        operator: is_not_null
+      - field: auction_notice_discloses_pending_sa
+        operator: is_not_null
+    checks:
+      - check_id: M3_C8_a
+        description: "Pending SA existed but was not disclosed in auction notice"
+        expression: "pending_sa_existed_at_auction_date == True and auction_notice_discloses_pending_sa == False"
+        result_if_true: FAIL
+        severity: FATAL
+        message_template: "Securitisation Application {previous_sa_number} was pending before DRT-I on the date of auction ({auction_date}). Rule 8(6)(7)(a) requires the bank to disclose all encumbrances KNOWN to it in the auction notice, which includes pending litigation. The bank failed to disclose the pending SA and any interim orders — material concealment that vitiates the auction process."
+        judgment_tags: [rakesh_kumar_kaushal, pending_litigation_concealed, rule_8_6_7_a]
+        ground_codes: [PENDING_SA_CONCEALED, AUCTION_NOTICE_AFFIXING]
+    pass_message_template: "Auction notice disclosed pending litigation ({previous_sa_number}) as required by Rule 8(6)(7)(a)."
