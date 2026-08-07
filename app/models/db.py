@@ -183,6 +183,8 @@ class Case(Base):
     principal_amount:         Mapped[Optional[Decimal]] = mapped_column(Numeric(18, 2))
     status:                   Mapped[str]              = mapped_column(String(30), nullable=False, default="DRAFT")
     pipeline_stage:           Mapped[Optional[str]]    = mapped_column(Text)
+    pipeline_step_current:    Mapped[int]              = mapped_column(Integer, nullable=False, default=0)
+    pipeline_step_total:      Mapped[int]              = mapped_column(Integer, nullable=False, default=0)
     intake_filter_result:     Mapped[Optional[dict]]   = mapped_column(JSONB)
     judgment_coverage_alerts: Mapped[Optional[list]]   = mapped_column(JSONB)
     created_at:               Mapped[datetime]         = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -378,6 +380,7 @@ class ComplianceResult(Base):
             )""",
             name="compliance_results_severity_check"
         ),
+        CheckConstraint("outcome_favors IN ('BANK','BORROWER','NEUTRAL')", name="compliance_results_outcome_favors_check"),
         Index("idx_compliance_case_id", "case_id"),
     )
 
@@ -387,6 +390,9 @@ class ComplianceResult(Base):
     module:       Mapped[str]             = mapped_column(Text, nullable=False)
     status:       Mapped[str]             = mapped_column(String(10), nullable=False)
     severity:     Mapped[Optional[str]]   = mapped_column(String(20))
+    # Who this finding favors — decoupled from `status` (a rule author's status
+    # label like PASS/FAIL is not a reliable signal of direction, see H14(c)).
+    outcome_favors: Mapped[str]           = mapped_column(String(10), nullable=False, server_default="BANK")
     message:      Mapped[Optional[str]]   = mapped_column(Text)
     detail_json:  Mapped[Optional[dict]]  = mapped_column(JSONB)
     judgment_tags: Mapped[Optional[list]] = mapped_column(ARRAY(Text))
@@ -456,7 +462,7 @@ class JudgmentApplicability(Base):
         CheckConstraint(
             """status IN (
                 'APPLICABLE','PARTIAL','NOT_APPLICABLE',
-                'SIMILARITY_RETRIEVED','LEGAL_UNCERTAINTY','UNAVAILABLE'
+                'LEGAL_UNCERTAINTY','UNAVAILABLE'
             )""",
             name="judgment_applicability_status_check"
         ),

@@ -188,7 +188,17 @@ async def get_workbench(
 ) -> WorkbenchResponse:
     await verify_case_bank_access(case_id, current_user, db)
 
-    facts_result = await db.execute(select(CaseFact).where(CaseFact.case_id == case_id))
+    # nlp_done_{para_id} rows are internal bookkeeping (chain_a.py's
+    # resumable-retry marker, extraction_method="nlp_implied" so they'd
+    # otherwise fail _is_low_confidence's nlp_implied check and flood the
+    # workbench — one per paragraph, 1190 on a large doc) — never a real
+    # extracted fact, must never reach officer review.
+    facts_result = await db.execute(
+        select(CaseFact).where(
+            CaseFact.case_id == case_id,
+            ~CaseFact.field_name.like("nlp_done_%"),
+        )
+    )
     facts = facts_result.scalars().all()
 
     para_ids = {fact.source_paragraph_id for fact in facts if fact.source_paragraph_id}
@@ -269,7 +279,12 @@ async def get_all_facts(
     db: AsyncSession = DbDep,
 ) -> list[FactResponse]:
     await verify_case_bank_access(case_id, current_user, db)
-    result = await db.execute(select(CaseFact).where(CaseFact.case_id == case_id))
+    result = await db.execute(
+        select(CaseFact).where(
+            CaseFact.case_id == case_id,
+            ~CaseFact.field_name.like("nlp_done_%"),
+        )
+    )
     return [_fact_to_response(f) for f in result.scalars().all()]
 
 

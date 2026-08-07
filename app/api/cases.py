@@ -31,18 +31,35 @@ from app.services.compliance.pre_intake import run_f2_filter
 router = APIRouter()
 
 
-STAGE_PROGRESS: dict[str, int] = {
-    "OCR": 10,
-    "LANGUAGE_DETECTION": 20,
-    "TRANSLATION": 30,
-    "REGEX_EXTRACTION": 40,
-    "NLP_EXTRACTION": 60,
-    "POPULATING_WORKBENCH": 70,
-    "PENDING_HUMAN_REVIEW": 80,
-    "ANALYSING": 85,
-    "PENDING_JUDGMENT_REVIEW": 90,
-    "COMPLETE": 100,
+    # (band_start, band_end) percent each named stage occupies. A case
+    # sitting in a stage no longer reports the band's fixed endpoint —
+    # get_pipeline_status interpolates using pipeline_step_current/_total,
+    # which each Chain A/B task updates as it actually completes units of
+    # work (paragraphs/batches/docs), so progress moves within the band
+    # instead of jumping straight from one hardcoded number to the next.
+STAGE_PROGRESS_BANDS: dict[str, tuple[int, int]] = {
+    "OCR": (0, 10),
+    "LANGUAGE_DETECTION": (10, 20),
+    "TRANSLATION": (20, 30),
+    "REGEX_EXTRACTION": (30, 40),
+    "NLP_EXTRACTION": (40, 60),
+    "POPULATING_WORKBENCH": (60, 70),
+    "PENDING_HUMAN_REVIEW": (70, 80),
+    "ANALYSING": (80, 85),
+    "PENDING_JUDGMENT_REVIEW": (85, 90),
+    "COMPLETE": (100, 100),
 }
+
+
+def _compute_progress_pct(stage: str, step_current: int, step_total: int) -> int:
+    band = STAGE_PROGRESS_BANDS.get(stage)
+    if band is None:
+        return 0
+    start, end = band
+    if step_total <= 0:
+        return start
+    frac = min(max(step_current / step_total, 0.0), 1.0)
+    return round(start + (end - start) * frac)
 
 STAGE_MESSAGES: dict[str, str] = {
     "OCR": "Running OCR on uploaded documents…",
@@ -122,6 +139,8 @@ class PipelineStatusResponse(BaseModel):
     pipeline_stage: Optional[str]
     progress_pct: int
     stage_message: str
+    step_current: int
+    step_total: int
     intake_filter_result: Optional[dict]
 
 
@@ -294,14 +313,18 @@ async def get_pipeline_status(
 ) -> PipelineStatusResponse:
     case = await verify_case_bank_access(case_id, current_user, db)
     stage = case.pipeline_stage or case.status
-    progress = STAGE_PROGRESS.get(stage, 0)
+    progress = _compute_progress_pct(stage, case.pipeline_step_current, case.pipeline_step_total)
     message = STAGE_MESSAGES.get(stage, f"Status: {case.status}")
+    if case.pipeline_step_total > 0:
+        message = f"{message} ({case.pipeline_step_current}/{case.pipeline_step_total})"
     return PipelineStatusResponse(
         case_id=case.id,
         status=case.status,
         pipeline_stage=case.pipeline_stage,
         progress_pct=progress,
         stage_message=message,
+        step_current=case.pipeline_step_current,
+        step_total=case.pipeline_step_total,
         intake_filter_result=case.intake_filter_result,
     )
 

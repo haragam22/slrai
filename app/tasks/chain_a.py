@@ -23,6 +23,7 @@ def run_chain_a(self, case_id: str, doc_id: str):
         task_regex_extract_all.si(case_id),
         task_update_pipeline_stage.si(case_id, "NLP_EXTRACTION"),
         task_nlp_extract_facts.si(case_id),
+        task_check_pre_intake_filters.si(case_id),
         task_update_pipeline_stage.si(case_id, "POPULATING_WORKBENCH"),
         task_populate_workbench.si(case_id),
         task_set_case_status.si(case_id, "PENDING_HUMAN_REVIEW"),
@@ -32,12 +33,20 @@ def run_chain_a(self, case_id: str, doc_id: str):
 
 @celery_app.task(name="tasks.chain_a.set_status")
 def task_set_case_status(case_id: str, status: str) -> None:
-    """Updates cases.status in DB. Uses .si() in chains — no passthrough arg."""
+    """Updates cases.status in DB. Uses .si() in chains — no passthrough arg.
+    Never overwrites a terminal INTAKE_REJECTED status set by
+    task_check_pre_intake_filters — a case that failed F1/F3/F4 (agricultural
+    land bar / substantial repayment / IBC moratorium) must stay rejected,
+    not get silently moved back to PENDING_HUMAN_REVIEW by the rest of the
+    fixed Celery chain running after it."""
     logger.info("running task_set_case_status case=%s status=%s", case_id, status)
     from app.models.db import SyncSessionLocal, Case
     with SyncSessionLocal() as db:
         case = db.query(Case).filter_by(id=case_id).first()
         if case:
+            if case.status == "INTAKE_REJECTED" and status != "INTAKE_REJECTED":
+                logger.info("case=%s already INTAKE_REJECTED — skipping status=%s", case_id, status)
+                return
             case.status = status
             case.pipeline_stage = None
             db.commit()
@@ -45,14 +54,31 @@ def task_set_case_status(case_id: str, status: str) -> None:
 
 @celery_app.task(name="tasks.chain_a.update_stage")
 def task_update_pipeline_stage(case_id: str, stage: str) -> None:
-    """Updates pipeline_stage on the case row. Uses .si() in chains."""
+    """Updates pipeline_stage on the case row. Uses .si() in chains.
+    Resets step_current/step_total — each stage reports its own progress
+    from zero; a stale count from the previous stage would otherwise leak
+    into get_pipeline_status's interpolation for the new one."""
     logger.info("running task_update_pipeline_stage case=%s stage=%s", case_id, stage)
     from app.models.db import SyncSessionLocal, Case
     with SyncSessionLocal() as db:
         case = db.query(Case).filter_by(id=case_id).first()
         if case:
             case.pipeline_stage = stage
+            case.pipeline_step_current = 0
+            case.pipeline_step_total = 0
             db.commit()
+
+
+def _set_step_progress(db, case_id: str, current: int, total: int) -> None:
+    """Shared helper — every Chain A task that loops over paragraphs/docs/
+    batches calls this so pipeline-status reports real progress instead of
+    the stage's flat band endpoint. See STAGE_PROGRESS_BANDS in cases.py."""
+    from app.models.db import Case
+    case = db.query(Case).filter_by(id=case_id).first()
+    if case:
+        case.pipeline_step_current = current
+        case.pipeline_step_total = total
+        db.commit()
 
 
 @celery_app.task(name="tasks.chain_a.ocr_document")
@@ -116,8 +142,10 @@ def task_detect_language(case_id: str) -> None:
             .filter(Document.case_id == case_id)
             .all()
         )
-        for para in paragraphs:
+        for i, para in enumerate(paragraphs, start=1):
             para.language = detect_paragraph_language(para.text_original)
+            if i % 25 == 0 or i == len(paragraphs):
+                _set_step_progress(db, case_id, i, len(paragraphs))
         db.commit()
 
 
@@ -169,7 +197,7 @@ def task_regex_extract_all(case_id: str) -> None:
             .filter(Document.case_id == case_id)
             .all()
         )
-        for para in paragraphs:
+        for para_idx, para in enumerate(paragraphs, start=1):
             text = para.get_text()
             hits = extract_all(text)
             for i, d in enumerate(hits["dates"]):
@@ -199,6 +227,8 @@ def task_regex_extract_all(case_id: str) -> None:
                     "source_page": para.page_number,
                     "source_paragraph_id": para.id,
                 })
+            if para_idx % 25 == 0 or para_idx == len(paragraphs):
+                _set_step_progress(db, case_id, para_idx, len(paragraphs))
         db.commit()
 
 
@@ -219,9 +249,19 @@ def task_nlp_extract_facts(self, case_id: str) -> None:
     AuthenticationError is fatal — case FAILED, no retry (caught below, not
     added to autoretry_for). Malformed-JSON/timeout failures are already
     handled inside nlp_layer.extract_facts_batch (returns None, no raise).
+
+    Resumable retry: each paragraph's result is persisted+committed as soon
+    as its batch completes (via on_batch_complete below), and marked done
+    with a `nlp_done_{para.id}` CaseFact. A prior attempt that got cut off
+    mid-run by a RateLimitError (Celery's autoretry_for) already saved
+    everything up to that point — this attempt only (re)processes whatever's
+    still pending, instead of re-running every batch for the whole document
+    from scratch on every retry (was silently multiplying the Gemini call
+    count by up to 4x — max_retries=3 — on any doc large enough to hit the
+    rate limit before finishing one pass).
     """
     logger.info("running task_nlp_extract_facts case=%s", case_id)
-    from app.models.db import Case, Document, Paragraph, SAGround, SyncSessionLocal
+    from app.models.db import Case, CaseFact, Document, Paragraph, SAGround, SyncSessionLocal
     from app.services.extraction.confidence_router import route_fact
     from app.services.extraction.fact_persistence import aggregate_metadata, upsert_case_fact
     from app.services.extraction.nlp_layer import process_paragraphs_for_extraction
@@ -236,27 +276,27 @@ def task_nlp_extract_facts(self, case_id: str) -> None:
         if not rows:
             return
 
+        done_ids = {
+            para_id for (para_id,) in db.query(CaseFact.source_paragraph_id)
+            .filter(CaseFact.case_id == case_id, CaseFact.field_name.like("nlp_done_%"))
+            .all()
+        }
+        pending_rows = [(para, doc_type) for para, doc_type in rows if para.id not in done_ids]
+
+        case = db.query(Case).filter_by(id=case_id).first()
+        if case:
+            _set_step_progress(db, case_id, len(rows) - len(pending_rows), len(rows))
+
+        if not pending_rows:
+            return  # a prior attempt already finished every paragraph
+
+        by_para_id = {para.id: para for para, _ in pending_rows}
         paragraphs_payload = [
-            {
-                "para_id": para.id,
-                "text_for_extraction": para.get_text(),
-                "doc_type": doc_type,
-            }
-            for para, doc_type in rows
+            {"para_id": para.id, "text_for_extraction": para.get_text(), "doc_type": doc_type}
+            for para, doc_type in pending_rows
         ]
 
-        try:
-            results = process_paragraphs_for_extraction(paragraphs_payload)
-        except anthropic.AuthenticationError:
-            logger.error("ANTHROPIC_AUTH_FAILED case=%s", case_id)
-            case = db.query(Case).filter_by(id=case_id).first()
-            if case:
-                case.status = "FAILED"
-                case.pipeline_stage = None
-            db.commit()
-            return  # fatal, no retry
-
-        for (para, _doc_type), result in zip(rows, results):
+        def _persist_one(para, result) -> None:
             if not result:
                 upsert_case_fact(db, case_id, f"nlp_extraction_failed_{para.id}", {
                     "field_value": f"NLP extraction failed for paragraph {para.id}. Manual review required.",
@@ -266,71 +306,171 @@ def task_nlp_extract_facts(self, case_id: str) -> None:
                     "source_page": para.page_number,
                     "source_paragraph_id": para.id,
                 })
-                continue
+                # marked done below — a persistently-failing paragraph must
+                # not be retried forever on every RateLimitError retry.
+            else:
+                # Gemini/Claude sometimes emit an explicit `null` for a group
+                # key instead of omitting it — `.get(key, {})` only applies
+                # the default when the key is missing, not when its value IS
+                # None, so an unguarded `.items()` below crashes the whole
+                # task (AttributeError, not a RateLimitError — no autoretry,
+                # permanent failure). `or {}`/`or []` catch both cases.
+                for ground in result.get("ground_codes") or []:
+                    code = ground.get("code")
+                    if not code or code == "UNKNOWN":
+                        continue
+                    exists = (
+                        db.query(SAGround)
+                        .filter_by(case_id=case_id, ground_code=code, source_paragraph_id=para.id)
+                        .first()
+                    )
+                    if not exists:
+                        db.add(SAGround(
+                            case_id=case_id,
+                            ground_code=code,
+                            statutory_basis=ground.get("statutory_basis"),
+                            source_paragraph_id=para.id,
+                            confidence=result.get("confidence", 0.0),
+                        ))
 
-            for ground in result.get("ground_codes", []):
-                code = ground.get("code")
-                if not code or code == "UNKNOWN":
-                    continue
-                exists = (
-                    db.query(SAGround)
-                    .filter_by(case_id=case_id, ground_code=code, source_paragraph_id=para.id)
-                    .first()
-                )
-                if not exists:
-                    db.add(SAGround(
-                        case_id=case_id,
-                        ground_code=code,
-                        statutory_basis=ground.get("statutory_basis"),
-                        source_paragraph_id=para.id,
-                        confidence=result.get("confidence", 0.0),
-                    ))
+                confidence = result.get("confidence", 0.0)
+                implied = result.get("implied_facts_present", False)
 
-            confidence = result.get("confidence", 0.0)
-            implied = result.get("implied_facts_present", False)
-            for field_name, value in result.get("boolean_facts", {}).items():
-                if value is None:
-                    continue
-                routed = route_fact(field_name, {
-                    "field_value": str(value),
-                    "confidence": confidence,
-                    "implied": implied,
-                    "extraction_method": "nlp_explicit",
-                })
-                upsert_case_fact(db, case_id, field_name, {
-                    "field_value": routed["field_value"],
-                    "confidence": routed["confidence"],
-                    "extraction_method": routed["extraction_method"],
-                    "source_document_id": para.document_id,
-                    "source_page": para.page_number,
-                    "source_paragraph_id": para.id,
-                })
+                # boolean_facts/date_facts/numeric_facts — same generic
+                # confidence-routed persistence for every named key each
+                # group can contain (see nlp_layer.py's BATCH_USER_TEMPLATE
+                # for the full field list per group).
+                for group_key in ("boolean_facts", "date_facts", "numeric_facts"):
+                    for field_name, value in (result.get(group_key) or {}).items():
+                        if value is None:
+                            continue
+                        routed = route_fact(field_name, {
+                            "field_value": str(value),
+                            "confidence": confidence,
+                            "implied": implied,
+                            "extraction_method": "nlp_explicit",
+                        })
+                        upsert_case_fact(db, case_id, field_name, {
+                            "field_value": routed["field_value"],
+                            "confidence": routed["confidence"],
+                            "extraction_method": routed["extraction_method"],
+                            "source_document_id": para.document_id,
+                            "source_page": para.page_number,
+                            "source_paragraph_id": para.id,
+                        })
 
-            # NOTE: only balance_payment_date is wired here. The many other
-            # named date fields the rule engine depends on (auction_date,
-            # demand_notice_date, sale_certificate_date, mortgage_date,
-            # lease_date, valuation_date, npa_classification_date, etc.) have
-            # the same gap — the generic "dates":[{date,context}] array below
-            # is never persisted to named CaseFact rows. See docs/schema_gaps.md.
-            for field_name, value in result.get("date_facts", {}).items():
-                if value is None:
-                    continue
-                routed = route_fact(field_name, {
-                    "field_value": str(value),
-                    "confidence": confidence,
-                    "implied": implied,
-                    "extraction_method": "nlp_explicit",
-                })
-                upsert_case_fact(db, case_id, field_name, {
-                    "field_value": routed["field_value"],
-                    "confidence": routed["confidence"],
-                    "extraction_method": routed["extraction_method"],
-                    "source_document_id": para.document_id,
-                    "source_page": para.page_number,
-                    "source_paragraph_id": para.id,
-                })
+                # Flat single-value fields (not nested under boolean_facts/
+                # date_facts because they're enums, not booleans) — sa_applicant_type
+                # drives THIRD_PARTY_ATS/AUCTION_PURCHASER routing (M10),
+                # notice_service_mode drives M1_C3.
+                for field_name in ("sa_applicant_type", "notice_service_mode", "asset_type", "measure_type", "secured_asset_type"):
+                    value = result.get(field_name)
+                    if value is None:
+                        continue
+                    routed = route_fact(field_name, {
+                        "field_value": str(value),
+                        "confidence": confidence,
+                        "implied": implied,
+                        "extraction_method": "nlp_explicit",
+                    })
+                    upsert_case_fact(db, case_id, field_name, {
+                        "field_value": routed["field_value"],
+                        "confidence": routed["confidence"],
+                        "extraction_method": routed["extraction_method"],
+                        "source_document_id": para.document_id,
+                        "source_page": para.page_number,
+                        "source_paragraph_id": para.id,
+                    })
 
-        aggregate_metadata(case_id, results, db)
+                aggregate_metadata(case_id, [result], db)
+
+            upsert_case_fact(db, case_id, f"nlp_done_{para.id}", {
+                "field_value": "1",
+                "confidence": 1.0,
+                "extraction_method": "nlp_implied",
+                "source_document_id": para.document_id,
+                "source_page": para.page_number,
+                "source_paragraph_id": para.id,
+            })
+
+        already_done = len(rows) - len(pending_rows)
+
+        def on_batch_complete(orig_indices, batch_result) -> None:
+            for orig_idx, extraction in zip(orig_indices, batch_result or [None] * len(orig_indices)):
+                para_id = paragraphs_payload[orig_idx]["para_id"]
+                _persist_one(by_para_id[para_id], extraction)
+            db.commit()
+            nonlocal already_done
+            already_done += len(orig_indices)
+            _set_step_progress(db, case_id, already_done, len(rows))
+
+        try:
+            process_paragraphs_for_extraction(paragraphs_payload, on_batch_complete=on_batch_complete)
+        except anthropic.AuthenticationError:
+            logger.error("ANTHROPIC_AUTH_FAILED case=%s", case_id)
+            if case:
+                case.status = "FAILED"
+                case.pipeline_stage = None
+                db.commit()
+            return  # fatal, no retry
+
+
+@celery_app.task(name="tasks.chain_a.check_pre_intake_filters")
+def task_check_pre_intake_filters(case_id: str) -> None:
+    """F1/F3/F4 (terminating) + F5/F6 (routing) — see pre_intake.py.
+
+    These were fully coded (correct logic, correct messaging) but never
+    called anywhere in the pipeline — the module docstring claimed "F1, F3,
+    F4 run during Chain A after document extraction" but no task_* function
+    anywhere actually invoked them. Confirmed via full-codebase grep before
+    concluding this, not assumed. Practical effect: a case with an active
+    IBC moratorium (Section 14 stay) or secured against agricultural land
+    (statutory SARFAESI exclusion, Section 31(i)) could reach a PROCEED
+    recommendation with nothing in the pipeline ever having checked either
+    condition. F5/F6 (non-terminating routing flags) were separately found
+    reimplemented ad-hoc in chain_b.py (M10 trigger) and report.html.j2
+    (third-party notice text) — those still work despite this function
+    never firing, only F1/F3/F4 had zero equivalent anywhere.
+
+    Runs on RAW extracted facts (any confidence, not human_confirmed-gated)
+    — these are pre-workbench filters by design (see pre_intake.py's F2
+    precedent at case-creation time, same pattern), not YAML compliance
+    checks. F1/F3/F4 only fire when their specific fact is actually present
+    and matches — they're naturally no-ops on cases where the fact doesn't
+    apply, not something imposed on every case.
+    """
+    logger.info("running task_check_pre_intake_filters case=%s", case_id)
+    from app.models.db import Case, CaseFact, SyncSessionLocal
+    from app.services.compliance.pre_intake import run_pre_intake_filters_chain_a, run_route_flags
+
+    with SyncSessionLocal() as db:
+        case = db.query(Case).filter_by(id=case_id).first()
+        if not case:
+            return
+
+        raw_facts = {row.field_name: row.field_value for row in db.query(CaseFact).filter_by(case_id=case_id).all()}
+        # principal_loan_amount for F3's repayment-ratio check is the same
+        # figure as Case.principal_amount set at intake — no separate
+        # extraction field for it, reuse what's already on the case row.
+        if case.principal_amount is not None:
+            raw_facts.setdefault("principal_loan_amount", str(case.principal_amount))
+
+        terminating = run_pre_intake_filters_chain_a(raw_facts)
+        route_flags = run_route_flags(raw_facts)
+
+        if route_flags:
+            case.judgment_coverage_alerts = (case.judgment_coverage_alerts or []) + [
+                {**flag, "severity": "INFO", "action_required": False} for flag in route_flags
+            ]
+
+        if terminating is not None:
+            case.status = "INTAKE_REJECTED"
+            case.intake_filter_result = terminating.model_dump()
+            logger.warning(
+                "case=%s REJECTED at pre-intake: %s — %s",
+                case_id, terminating.filter_id, terminating.reason,
+            )
+
         db.commit()
 
 
