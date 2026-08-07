@@ -1,5 +1,6 @@
 """Chain A — document upload → PENDING_HUMAN_REVIEW (fires automatically on upload)."""
 import logging
+import re
 
 import anthropic
 from celery import chain
@@ -7,6 +8,10 @@ from celery import chain
 from app.tasks.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
+
+# date_facts values must be DD.MM.YYYY (per nlp_layer.py's BATCH_USER_TEMPLATE
+# spec) or nothing gets persisted — see task_nlp_extract_facts._persist_one.
+_DATE_RE = re.compile(r"^\d{1,2}\.\d{1,2}\.\d{4}$")
 
 
 @celery_app.task(bind=True, name="tasks.chain_a.run", max_retries=2)
@@ -343,6 +348,17 @@ def task_nlp_extract_facts(self, case_id: str) -> None:
                 for group_key in ("boolean_facts", "date_facts", "numeric_facts"):
                     for field_name, value in (result.get(group_key) or {}).items():
                         if value is None:
+                            continue
+                        if group_key == "date_facts" and not _DATE_RE.match(str(value)):
+                            # Model partial-filled instead of nulling the whole
+                            # field (seen live: source text "Date: .08.2026" —
+                            # missing day digit — produced literal "null.08.2026"
+                            # instead of JSON null, contra its own prompt
+                            # instructions). Never persist a malformed date.
+                            logger.warning(
+                                "nlp_layer: dropping malformed date_facts value case=%s field=%s value=%r",
+                                case_id, field_name, value,
+                            )
                             continue
                         routed = route_fact(field_name, {
                             "field_value": str(value),
