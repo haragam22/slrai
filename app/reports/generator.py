@@ -184,7 +184,7 @@ def _get_applicable_judgments_by_ground(db: Session, case_id: str) -> dict[str, 
     applicability_rows = (
         db.query(JudgmentApplicability)
         .filter_by(case_id=case_id)
-        .filter(JudgmentApplicability.status.in_(["APPLICABLE", "PARTIAL", "SIMILARITY_RETRIEVED"]))
+        .filter(JudgmentApplicability.status.in_(["APPLICABLE", "PARTIAL"]))
         .all()
     )
     judgment_ids = {row.judgment_id for row in applicability_rows}
@@ -223,8 +223,12 @@ def build_report_context(case_id: str, db: Session) -> dict:
     if not case:
         raise ValueError(f"Case {case_id} not found")
 
+    # nlp_done_{para_id} rows are internal resumable-retry bookkeeping (see
+    # chain_a.py task_nlp_extract_facts), not real facts — excluded here the
+    # same way workbench.py excludes them from officer review, otherwise
+    # ~1 fake key per paragraph (1190 on a large doc) bloats the report.
     facts_rows = db.query(CaseFact).filter_by(case_id=case_id).all()
-    facts = {f.field_name: f.field_value for f in facts_rows}
+    facts = {f.field_name: f.field_value for f in facts_rows if not f.field_name.startswith("nlp_done_")}
 
     compliance_rows = db.query(ComplianceResult).filter_by(case_id=case_id).all()
     compliance_results = [
@@ -233,6 +237,7 @@ def build_report_context(case_id: str, db: Session) -> dict:
             "module": r.module,
             "status": r.status,
             "severity": r.severity,
+            "outcome_favors": r.outcome_favors,
             "message": r.message,
             "detail_json": r.detail_json,
             "module_display": MODULE_NAMES.get(r.module, r.module),
@@ -243,7 +248,14 @@ def build_report_context(case_id: str, db: Session) -> dict:
         for r in compliance_rows
     ]
 
-    sa_ground_rows = db.query(SAGround).filter_by(case_id=case_id).all()
+    # One row per unique ground_code — SAGround has one row per source
+    # paragraph a ground was detected in, so a ground raised in 15 paragraphs
+    # otherwise produces 15 identical report rows. Keep the highest-confidence
+    # paragraph's row as the representative.
+    sa_ground_rows_raw = db.query(SAGround).filter_by(case_id=case_id).all()
+    sa_ground_rows = list(
+        {g.ground_code: g for g in sorted(sa_ground_rows_raw, key=lambda g: g.confidence or 0)}.values()
+    )
     ground_score_rows = db.query(GroundScore).filter_by(case_id=case_id).all()
     ground_score_map = {g.ground_code: g for g in ground_score_rows}
 
@@ -271,18 +283,33 @@ def build_report_context(case_id: str, db: Session) -> dict:
         }
         ground_scores.append(entry)
 
-    compliance_score = _calculate_compliance(compliance_results)
-    litigation_exposure = _calculate_exposure(ground_scores)
+    # chain_b.py already computed these correctly (compliance_score.py /
+    # ground_strength.py — outcome_favors-aware). Reuse that, don't
+    # recompute from scratch here: _calculate_compliance/_calculate_exposure
+    # below are naive (status=="PASS" ratio; plain mean of ground_strength)
+    # and don't know about outcome_favors at all — they're a fallback only,
+    # for the case a report is somehow requested before chain_b has run.
+    latest_report = db.query(Report).filter_by(case_id=case_id).order_by(Report.generated_at.desc()).first()
+    if latest_report and latest_report.compliance_score is not None:
+        compliance_score = latest_report.compliance_score
+    else:
+        compliance_score = _calculate_compliance(compliance_results)
+    if latest_report and latest_report.litigation_exposure is not None:
+        litigation_exposure = latest_report.litigation_exposure
+    else:
+        litigation_exposure = _calculate_exposure(ground_scores)
 
     # Group compliance results by module
     module_results: dict[str, list] = {}
     for r in compliance_results:
         module_results.setdefault(r["module"], []).append(r)
 
-    red_flags = [r for r in compliance_results if r["status"] == "FAIL" and r["severity"] in ("FATAL", "ABSOLUTE_BAR")]
+    red_flags = [
+        r for r in compliance_results
+        if r["severity"] in ("FATAL", "ABSOLUTE_BAR") and r["outcome_favors"] == "BORROWER"
+    ]
 
     recommendation = case.pipeline_stage
-    latest_report = db.query(Report).filter_by(case_id=case_id).order_by(Report.generated_at.desc()).first()
     if latest_report and latest_report.recommendation:
         recommendation = latest_report.recommendation
 
@@ -388,6 +415,31 @@ def _date_fmt_filter(value) -> str:
     return str(value)
 
 
+# Chars WeasyPrint's font stack (Inter/NotoDevanagari, see report.html.j2)
+# has no glyph for — shows up as U+FFFD replacement boxes in the PDF.
+# Text sourced from judgment .md files and Claude/Gemini output (curly
+# quotes, em/en-dashes) hits this same gap, not just the template's own
+# literals, so this scrubs the whole rendered string, not just the template.
+_GLYPH_SCRUB = {
+    "—": "-",   # em dash —
+    "–": "-",   # en dash –
+    "‘": "'",   # left single quote '
+    "’": "'",   # right single quote '
+    "“": '"',   # left double quote "
+    "”": '"',   # right double quote "
+    "•": "*",   # bullet •
+    "⚠": "[!]", # warning sign ⚠
+    "✓": "[x]", # checkmark ✓
+    "…": "...", # ellipsis …
+}
+
+
+def _scrub_unsupported_glyphs(html: str) -> str:
+    for old, new in _GLYPH_SCRUB.items():
+        html = html.replace(old, new)
+    return html
+
+
 def _render_template(context: dict) -> str:
     env = Environment(
         loader=FileSystemLoader(settings.report_template_dir),
@@ -397,7 +449,7 @@ def _render_template(context: dict) -> str:
     env.filters["pct"] = _pct_filter
     env.filters["date_fmt"] = _date_fmt_filter
     template = env.get_template("report.html.j2")
-    return template.render(**context)
+    return _scrub_unsupported_glyphs(template.render(**context))
 
 
 # ─── MAIN ENTRY POINT ────────────────────────────────────────────────────────

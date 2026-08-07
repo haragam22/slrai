@@ -74,5 +74,5 @@ async def regenerate_report(
     await verify_case_bank_access(case_id, current_user, db)
     from app.reports.generator import generate_report
 
-    result = await asyncio.to_thread(generate_report, str(case_id), str(current_user.id))
+    result = await asyncio.to_thread(generate_report, str(case_id), str(current_user.user_id))
     return result
