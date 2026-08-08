@@ -139,6 +139,7 @@ def parse_judgment_md(path: Path) -> dict[str, Any]:
     frontmatter.setdefault("rules_sections", [])
     frontmatter.setdefault("slrai_modules", [])
     frontmatter.setdefault("keywords", [])
+    frontmatter.setdefault("retrieval_condition", "")
     frontmatter.setdefault("source", "SC_FULL_TEXT")
     frontmatter.setdefault("ik_doc_id", "")
     frontmatter.setdefault("ik_url", "")
@@ -165,3 +166,29 @@ def load_all_judgment_files(judgments_dir: Path) -> list[dict[str, Any]]:
     for md_file in sorted(judgments_dir.glob("*.md")):
         records.append(parse_judgment_md(md_file))
     return records
+
+
+def format_judgment_entry(j: dict[str, Any]) -> str:
+    """Formats one parsed judgment record as a wiki-style entry — shared by
+    the live in-memory loader (applicability.py) and load_judgments.py.
+    Entry headers use "### " (3 hashes); callers count judgments via
+    `len(re.findall(r"^### ", wiki, re.MULTILINE))`."""
+    ground_codes = ", ".join(j.get("ground_codes") or [])
+    modules = ", ".join(j.get("slrai_modules") or [])
+    statutory_basis = j.get("statutory_basis") or "N/A"
+    borrower_claim = j.get("borrower_claim") or "(not provided)"
+    holding = j.get("holding_summary") or "(not provided)"
+    applies_when = j.get("applicable_conditions_text") or "(not specified)"
+    does_not_apply_when = j.get("exclusion_conditions_text") or "None"
+
+    return (
+        f"### [{j['court']}] {j['short_name']}\n"
+        f"**Citation:** {j['citation']}\n"
+        f"**Favor:** {j['favor']} | **Statutory basis:** {statutory_basis}\n"
+        f"**Ground codes:** {ground_codes}\n"
+        f"**Modules:** {modules}\n\n"
+        f"**Borrower's claim:**\n{borrower_claim}\n\n"
+        f"**Holding:**\n{holding}\n\n"
+        f"**Applies when:**\n{applies_when}\n\n"
+        f"**Does NOT apply when:**\n{does_not_apply_when}\n"
+    )

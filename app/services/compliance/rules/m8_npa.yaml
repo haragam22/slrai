@@ -8,6 +8,7 @@ rules:
         expression: "days_from_last_payment_to_npa < 90"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Account classified NPA on {npa_classification_date}, only {days_from_last_payment_to_npa} days after last payment. RBI requires 90-day window."
         judgment_tags: [npa_classification, premature_npa]
 
@@ -23,6 +24,7 @@ rules:
         expression: "restructuring_approval_date == None or npa_classification_date <= restructuring_approval_date"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Account classified NPA while restructuring proposal was pending/active. Impermissible."
         judgment_tags: [npa_classification, restructuring_active]
 
@@ -34,6 +36,7 @@ rules:
         expression: "classification_notice_given == False"
         result_if_true: FAIL
         severity: ADVISORY
+        outcome_favors: BORROWER
         message_template: "No record of NPA classification notice to borrower. Advisory — not statutory, but some HCs have held it as fair procedure."
         judgment_tags: [npa_classification, natural_justice]
 
@@ -48,6 +51,7 @@ rules:
         expression: "interest_application_correct == False"
         result_if_true: FAIL
         severity: CURABLE
+        outcome_favors: BORROWER
         message_template: "Interest application post-NPA classification appears incorrect. RBI IRAC norms prohibit compound interest on NPA accounts. If compound interest was charged, demand notice amount is overstated — notice may be defective on amount. Ground: AMOUNT_DISPUTE."
         judgment_tags: [npa_classification, compound_interest, amount_dispute]
     pass_message_template: "Interest application on NPA account confirmed correct (simple interest only)."
@@ -71,6 +75,7 @@ rules:
         expression: "account_standard_at_auction_date == True"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Payments made after NPA classification (total Rs. {payments_post_npa_total}) were sufficient to cover the overdue amount of Rs. {overdue_amount_at_auction_date} as of the auction date {auction_date}. Under RBI IRAC Master Circular clause 4.2.5, when arrears of interest and principal are paid, the account should be reclassified as Standard. A bank cannot auction a property when the loan account is no longer NPA — the jurisdictional fact under Section 13(2) (the account being NPA) is no longer satisfied at the time of the sale."
         judgment_tags: [sravan_dall_mill, oswal_spinning, npa_upgradation]
         ground_codes: [NPA_PREMATURE]

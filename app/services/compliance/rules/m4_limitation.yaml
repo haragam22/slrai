@@ -8,6 +8,7 @@ rules:
         expression: "days_from_measure_to_sa > 45"
         result_if_true: FAIL
         severity: ABSOLUTE_BAR
+        outcome_favors: BANK  # time-barred SA — dismissal likely, this is a bank-favorable finding
         message_template: "SA filed {days_from_measure_to_sa} days after measure dated {measure_date}. 45-day limit exceeded. Application is time-barred."
         judgment_tags: [limitation, s17_time_bar]
 
@@ -19,6 +20,7 @@ rules:
         expression: "measure_type == None"
         result_if_true: UNKNOWN
         severity: REVIEW_REQUIRED
+        outcome_favors: NEUTRAL  # can't determine limitation status either way yet
         message_template: "The specific measure challenged by the SA cannot be determined. Review SA paragraph 1."
         judgment_tags: [limitation]
 
@@ -38,6 +40,7 @@ rules:
         expression: "(sa_filing_date - auction_date).days > 45"
         result_if_true: FAIL
         severity: ABSOLUTE_BAR
+        outcome_favors: BANK  # auction-specific time-bar — bank-favorable
         message_template: "SA filed after auction on {auction_date}. Any challenge specifically to the auction is time-barred even if challenge to earlier measures (possession) is within time."
         judgment_tags: [limitation, s17_time_bar, auction_challenge]
     pass_message_template: "SA filed within 45 days of auction date ({auction_date}). Challenge to auction is within time."
@@ -57,6 +60,7 @@ rules:
         expression: "challenges_auction == False and challenges_demand_notice == True"
         result_if_true: FAIL
         severity: ADVISORY
+        outcome_favors: BANK  # prayer doesn't cover the auction — DRT can't set it aside, bank-favorable
         message_template: "Prayer scope mismatch: auction already conducted on {auction_date} but SA prayer does not include SET_ASIDE_AUCTION or SET_ASIDE_SALE_CERTIFICATE. DRT cannot set aside a measure not prayed against. Applicant may need to amend prayer or file fresh SA under Oasis Dealcom principle (2016 SC)."
         judgment_tags: [oasis_dealcom, prayer_scope_mismatch]
         ground_codes: [SECOND_SA_FRESH_CAUSE]

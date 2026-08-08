@@ -41,6 +41,7 @@ RULE_TO_GROUND_MAP: dict[str, str] = {
     "M10_C1": "THIRD_PARTY_ATS",        "M10_C2": "THIRD_PARTY_ATS",
     "M10_C3": "THIRD_PARTY_ATS",        "M10_C4": "AUCTION_PURCHASER",
     "M10_C5": "RIGHT_OF_REDEMPTION",    "M10_C6": "SECOND_SA_FRESH_CAUSE",
+    "M10_C7": "AUCTION_PURCHASER",
 }
 
 
@@ -104,6 +105,7 @@ def task_run_compliance_engine(case_id: str) -> None:
                 module=r.module,
                 status=r.status,
                 severity=r.severity,
+                outcome_favors=r.outcome_favors,
                 message=r.message,
                 detail_json=r.detail,
                 judgment_tags=r.judgment_tags,
@@ -150,23 +152,21 @@ def task_retrieve_judgments(case_id: str) -> None:
     case_keywords = build_case_keywords(confirmed_facts)
 
     for ground_code in ground_codes:
-        class_a, class_b = retrieve_candidate_judgments(ground_code, case_keywords=case_keywords)
+        candidates = retrieve_candidate_judgments(ground_code, case_keywords=case_keywords)
         logger.info(
-            "case=%s ground=%s class_a=%d class_b=%d",
-            case_id, ground_code, len(class_a), len(class_b),
+            "case=%s ground=%s candidates=%d",
+            case_id, ground_code, len(candidates),
         )
 
 
 @celery_app.task(name="tasks.chain_b.evaluate_applicability")
 def task_evaluate_applicability(case_id: str) -> None:
-    """Two-path: Class A (wiki + single Claude call) fact-graph applicability,
-    Class B (Qdrant) similarity flag. Persists JudgmentApplicability rows."""
+    """Wiki + single Claude call fact-graph applicability against the whole
+    judgment corpus. Persists JudgmentApplicability rows."""
     logger.info("running task_evaluate_applicability case=%s", case_id)
     from app.models.db import Judgment, JudgmentApplicability, SyncSessionLocal
     from app.services.compliance.engine import load_confirmed_facts
-    from app.services.judgments.applicability import (
-        evaluate_class_a_applicability, process_class_b_candidates,
-    )
+    from app.services.judgments.applicability import evaluate_class_a_applicability
     from app.services.judgments.retrieval import (
         build_case_keywords, get_relevant_ground_codes, is_qdrant_reachable, retrieve_candidate_judgments,
     )
@@ -186,30 +186,16 @@ def task_evaluate_applicability(case_id: str) -> None:
 
         db.query(JudgmentApplicability).filter_by(case_id=case_id).delete()
 
-        seen_class_a_ids: set = set()
-        all_class_a_payloads: dict[str, dict] = {}
+        all_candidate_payloads: dict[str, dict] = {}
         for ground_code in ground_codes:
-            class_a, class_b = retrieve_candidate_judgments(ground_code, case_keywords=case_keywords)
-            for j in class_a:
-                all_class_a_payloads[j.get("citation", j.get("short_name", ""))] = j
+            candidates = retrieve_candidate_judgments(ground_code, case_keywords=case_keywords)
+            for j in candidates:
+                all_candidate_payloads[j.get("citation", j.get("short_name", ""))] = j
 
-            for entry in process_class_b_candidates(class_b):
-                judgment_uuid = entry["judgment"].get("id")
-                if not judgment_uuid:
-                    continue
-                db.add(JudgmentApplicability(
-                    case_id=case_id,
-                    judgment_id=judgment_uuid,
-                    ground_code=ground_code,
-                    status=entry["status"],
-                    reason=entry["reason"],
-                ))
-
-        if all_class_a_payloads:
+        if all_candidate_payloads:
             results = evaluate_class_a_applicability(
                 confirmed_facts=confirmed_facts,
                 sa_grounds=list(ground_codes),
-                judgment_count=len(all_class_a_payloads),
             )
             for r in results:
                 judgment = db.query(Judgment).filter_by(citation=r.get("citation")).first()
@@ -239,7 +225,8 @@ def task_compute_ground_statistics(case_id: str) -> None:
     from app.services.judgments.statistics import get_ground_statistics
 
     with SyncSessionLocal() as db:
-        grounds = db.query(SAGround).filter_by(case_id=case_id).all()
+        grounds_raw = db.query(SAGround).filter_by(case_id=case_id).all()
+        grounds = list({g.ground_code: g for g in grounds_raw}.values())
         for ground in grounds:
             stats = get_ground_statistics(ground.ground_code)
             score_row = db.query(GroundScore).filter_by(case_id=case_id, ground_code=ground.ground_code).first()
@@ -263,7 +250,8 @@ def task_check_judgment_coverage(case_id: str) -> None:
     from app.models.db import SyncSessionLocal, Case, SAGround, JudgmentApplicability
 
     with SyncSessionLocal() as db:
-        sa_grounds = db.query(SAGround).filter_by(case_id=case_id).all()
+        sa_grounds_raw = db.query(SAGround).filter_by(case_id=case_id).all()
+        sa_grounds = list({g.ground_code: g for g in sa_grounds_raw}.values())
         alerts = []
 
         for ground in sa_grounds:
@@ -352,16 +340,17 @@ def task_score_grounds(case_id: str) -> None:
     with SyncSessionLocal() as db:
         results = db.query(ComplianceResult).filter_by(case_id=case_id).all()
 
-        # Worst status per ground (FAIL > UNKNOWN > PASS) across rules mapped to it.
-        status_rank = {"FAIL": 2, "UNKNOWN": 1, "PASS": 0, "REVIEW": 1}
-        status_by_ground: dict[str, str] = {}
+        # All rule results mapped to each ground — compute_ground_strength
+        # weighs bank-favorable vs borrower-favorable findings itself; a
+        # single "worst status" can't represent a ground where rules of
+        # opposite outcome_favors coexist (e.g. THIRD_PARTY_ATS mixes
+        # M10_C2 bank-favorable and M10_C3 borrower-favorable).
+        results_by_ground: dict[str, list] = {}
         for r in results:
             ground_code = RULE_TO_GROUND_MAP.get(r.rule_id)
             if ground_code is None:
                 continue
-            current = status_by_ground.get(ground_code)
-            if current is None or status_rank.get(r.status, 0) > status_rank.get(current, 0):
-                status_by_ground[ground_code] = r.status
+            results_by_ground.setdefault(ground_code, []).append(r)
 
         score_rows = db.query(GroundScore).filter_by(case_id=case_id).all()
         for score_row in score_rows:
@@ -388,9 +377,9 @@ def task_score_grounds(case_id: str) -> None:
                 },
                 "data_confidence": score_row.corpus_confidence,
             }
-            compliance_status = status_by_ground.get(score_row.ground_code, "UNKNOWN")
+            ground_results = results_by_ground.get(score_row.ground_code, [])
             scored = compute_ground_strength(
-                score_row.ground_code, compliance_status, applicable_judgments, corpus_stats,
+                score_row.ground_code, ground_results, applicable_judgments, corpus_stats,
             )
             score_row.factual_score = scored["factual_score"]
             score_row.judicial_score = scored["judicial_score"]
@@ -439,8 +428,13 @@ def task_generate_recommendation(case_id: str) -> None:
             logger.warning("task_generate_recommendation: no scored report for case=%s", case_id)
             return
 
+        # ABSOLUTE_BAR severity alone isn't a reliable signal — M3_C7 (auction
+        # conducted despite an operational stay) is also ABSOLUTE_BAR but is
+        # a severe *bank* violation, not a time-bar. Gate on outcome_favors
+        # too so only the genuinely bank-favorable bars (M4_C1/C3) trigger
+        # the "likely time-barred, proceed" recommendation.
         absolute_bar_triggered = db.query(ComplianceResult).filter_by(
-            case_id=case_id, status="FAIL", severity="ABSOLUTE_BAR",
+            case_id=case_id, status="FAIL", severity="ABSOLUTE_BAR", outcome_favors="BANK",
         ).first() is not None
 
         rec = get_recommendation(report.compliance_score, report.litigation_exposure, absolute_bar_triggered)

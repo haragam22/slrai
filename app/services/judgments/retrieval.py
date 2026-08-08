@@ -30,7 +30,6 @@ PAYLOAD_INDEXES: dict[str, str] = {
     "court":                   "keyword",
     "favor":                   "keyword",
     "overruled":               "bool",
-    "has_verified_conditions": "bool",
     "favor_verified":          "bool",
     "source":                  "keyword",
     "keywords":                "keyword",
@@ -188,15 +187,17 @@ def retrieve_candidate_judgments(
     ground_code: str,
     case_keywords: list[str] | None = None,
     top_k: int = 20,
-) -> tuple[list[dict], list[dict]]:
+) -> list[dict]:
     """
-    Returns (class_a_candidates, class_b_candidates) for a single ground code.
+    Returns candidate judgments for a single ground code — the whole corpus
+    is one tier now (no Class A/B split; every judgment gets a real
+    applicability check in applicability.py).
 
     Stage 1: ground_code filter + vector similarity (overruled=False).
     Stage 2: if stage 1 returns <5 hits and case_keywords is given, supplement
-    with retrieve_by_keywords() — deduped by judgment id. Then split by
-    has_verified_conditions. Returns ([], []) on an empty/unreachable corpus
-    — never raises, so Chain B can run before the judgment corpus is loaded.
+    with retrieve_by_keywords() — deduped by judgment id.
+    Returns [] on an empty/unreachable corpus — never raises, so Chain B can
+    run before the judgment corpus is loaded.
     """
     from qdrant_client import QdrantClient
 
@@ -220,13 +221,11 @@ def retrieve_candidate_judgments(
         all_hits = [hit.payload for hit in results]
     except Exception:
         logger.exception("Qdrant retrieval failed for ground_code=%s — returning no candidates", ground_code)
-        return [], []
+        return []
 
     if len(all_hits) < 5 and case_keywords:
         existing_ids = {h.get("id") for h in all_hits}
         keyword_hits = retrieve_by_keywords(case_keywords, top_k=10)
         all_hits += [h for h in keyword_hits if h.get("id") not in existing_ids]
 
-    class_a = [j for j in all_hits if j.get("has_verified_conditions") is True]
-    class_b = [j for j in all_hits if j.get("has_verified_conditions") is False]
-    return class_a, class_b
+    return all_hits

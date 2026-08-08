@@ -7,7 +7,7 @@ is visible as a missing case_facts row), CONFLICT (fact_conflicts row).
 """
 from sqlalchemy import select
 
-from app.models.db import CaseFact, FactConflict
+from app.models.db import Case, CaseFact, FactConflict
 from app.services.compliance.engine import COMPUTED_FIELD_RESOLVERS
 
 
@@ -36,6 +36,8 @@ def upsert_case_fact(db, case_id: str, field_name: str, fact_data: dict) -> None
 
     if existing is None:
         db.add(CaseFact(case_id=case_id, field_name=field_name, **fact_data))
+        db.flush()  # autoflush=False on this session — later calls in the same
+        # batch must see this row to upsert instead of re-inserting (dupe key crash)
         return
 
     if existing.human_confirmed:
@@ -69,6 +71,8 @@ def upsert_case_fact(db, case_id: str, field_name: str, fact_data: dict) -> None
         candidate_b_extraction_method=fact_data.get("extraction_method"),
     )
     db.add(conflict)
+    db.flush()  # autoflush=False — later calls in the same batch must see this
+    # row so conflict_exists finds it instead of re-inserting (dupe key crash)
 
 
 def aggregate_metadata(case_id: str, extraction_results: list[dict], db) -> None:
@@ -81,16 +85,23 @@ def aggregate_metadata(case_id: str, extraction_results: list[dict], db) -> None
         "meta_sa_number": None,
         "meta_primary_borrower": None,
     }
+    # authorized_officer_name is stored under its own exact name (no meta_
+    # prefix) — it's a direct YAML precondition field (M1_C8), unlike
+    # drt_jurisdiction/sa_number which the compliance engine never looks up
+    # by name and instead get synced to Case columns below.
+    authorized_officer_name = None
     for result in extraction_results:
         if not result:
             continue
-        meta = result.get("metadata", {})
+        meta = result.get("metadata") or {}
         if meta.get("drt_jurisdiction") and not fields["meta_drt_jurisdiction"]:
             fields["meta_drt_jurisdiction"] = meta["drt_jurisdiction"]
         if meta.get("sa_number") and not fields["meta_sa_number"]:
             fields["meta_sa_number"] = meta["sa_number"]
         if meta.get("primary_borrower") and not fields["meta_primary_borrower"]:
             fields["meta_primary_borrower"] = meta["primary_borrower"]
+        if meta.get("authorized_officer_name") and not authorized_officer_name:
+            authorized_officer_name = meta["authorized_officer_name"]
 
     for field_name, value in fields.items():
         if value:
@@ -100,3 +111,24 @@ def aggregate_metadata(case_id: str, extraction_results: list[dict], db) -> None
                 "extraction_method": "nlp_explicit",
                 "human_confirmed": False,
             })
+
+    if authorized_officer_name:
+        upsert_case_fact(db, case_id, "authorized_officer_name", {
+            "field_value": authorized_officer_name,
+            "confidence": 0.85,
+            "extraction_method": "nlp_explicit",
+            "human_confirmed": False,
+        })
+
+    # Report/UI read Case.case_ref, Case.drt_bench, Case.borrower_name
+    # directly (see report.html.j2) — these were being written only to
+    # case_facts under meta_* names and never copied here, so the report
+    # header showed blank even when this exact data was extracted
+    # correctly. Only fills a column that's still empty — never overwrites
+    # a value the officer entered manually at case intake.
+    case = db.query(Case).filter_by(id=case_id).first()
+    if case:
+        if not case.case_ref and fields["meta_sa_number"]:
+            case.case_ref = fields["meta_sa_number"]
+        if not case.drt_bench and fields["meta_drt_jurisdiction"]:
+            case.drt_bench = fields["meta_drt_jurisdiction"]

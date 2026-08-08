@@ -109,6 +109,7 @@ def _upsert_qdrant(records: list[dict], citation_to_id: dict[str, uuid.UUID]) ->
                 "favor_verified": r.get("favor_verified", False),
                 "ground_codes": r["ground_codes"],
                 "keywords": r.get("keywords") or [],
+                "retrieval_condition": r.get("retrieval_condition") or "",
                 "slrai_modules": r.get("slrai_modules") or [],
                 "overruled": r.get("overruled", False),
                 "has_verified_conditions": r["has_verified_conditions"],

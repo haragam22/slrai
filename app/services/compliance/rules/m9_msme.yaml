@@ -12,6 +12,7 @@ rules:
         expression: "udyam_cert_in_bank_file == False"
         result_if_true: UNKNOWN
         severity: REVIEW_REQUIRED
+        outcome_favors: NEUTRAL
         message_template: "Borrower claims MSME status. No Udyam Certificate in bank file. Human confirmation required: check original credit file."
         judgment_tags: [msme_restructuring]
 
@@ -27,5 +28,6 @@ rules:
         expression: "restructuring_offered_pre_npa == False"
         result_if_true: FAIL
         severity: CURABLE
+        outcome_favors: BORROWER
         message_template: "Borrower is MSME (Udyam: {udyam_registration_number}). Restructuring not offered before NPA classification. Applicable circular: {applicable_rbi_circular}."
         judgment_tags: [msme_restructuring, rbi_circular_msme]

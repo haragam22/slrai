@@ -12,6 +12,7 @@ rules:
         expression: "lease_predates_mortgage == False"
         result_if_true: PASS
         severity: ADVISORY
+        outcome_favors: BANK
         message_template: "Lease ({lease_date}) is after mortgage ({mortgage_date}). Cannot defeat bank under ITC v. Blue Coast (2018) 15 SCC 99."
         judgment_tags: [tenancy, post_mortgage_lease]
 
@@ -27,6 +28,7 @@ rules:
         expression: "lease_post_default_notice == True"
         result_if_true: PASS
         severity: ADVISORY
+        outcome_favors: BANK
         message_template: "Lease ({lease_date}) was created after demand notice ({demand_notice_date}). Section 17(1)(d) expressly excludes such leases."
         judgment_tags: [tenancy, post_notice_lease]
 
@@ -42,6 +44,7 @@ rules:
         expression: "lease_registered == False and lease_duration_months > 12"
         result_if_true: PASS
         severity: ADVISORY
+        outcome_favors: BANK
         message_template: "BANK FAVORABLE: Claimed lease of {lease_duration_months} months is unregistered. Unregistered leases > 1 year have no validity under Section 107 Transfer of Property Act."
         judgment_tags: [tenancy, lease_registration, bank_favorable]
 
@@ -60,6 +63,7 @@ rules:
         expression: "lease_predates_mortgage == True and lease_registered == True"
         result_if_true: FAIL
         severity: REVIEW_REQUIRED
+        outcome_favors: BORROWER  # strongest tenancy defense — registered lease predates the mortgage
         message_template: "BORROWER STRONG GROUND: Registered lease dated {lease_date} predates mortgage dated {mortgage_date}. This is the strongest tenancy defence available under TPA. DRT will likely scrutinise enforcement. Do not proceed without full legal review."
         judgment_tags: [tenancy, pre_mortgage_registered_lease, borrower_strong_ground]
     pass_message_template: "No registered pre-mortgage lease detected. Tenancy claim assessed."

@@ -1,0 +1,612 @@
+ Mohd Kasim vs The Nainital Bank Ltd &amp; Anr on 4 June, 2025 
+
+ Author:  Subramonium Prasad  
+
+ Bench:  Subramonium Prasad  
+
+ $~
+*          IN THE HIGH COURT OF DELHI AT NEW DELHI
+%                                    Judgment reserved on: 25.04.2025
+                                  Judgment pronounced on: 04.06.2025
+
++          W.P.(C) 13954/2018
+
+           MOHD. KASIM                              ...PETITIONER
+                                 Through: Mr. Gaurav Mahajan, Ms.
+                                 Mehak Joshi and Mr. Kanak Shori,
+                                 Advocates.
+                                 versus
+
+           THE NAINITAL BANK LTD &amp; ANR           ...RESPONDENTS
+                             Through: Mr. R. P. Agarwal, Advocate
+                             Ms. Manisha Agrawal, Advocate for R-
+                             1/Bank.
+           CORAM:
+           HON&#x27;BLE MR. JUSTICE SUBRAMONIUM PRASAD
+           HON&#x27;BLE MR. JUSTICE HARISH VAIDYANATHAN
+           SHANKAR
+
+                           JUDGMENT
+ 
+ HARISH VAIDYANATHAN SHANKAR, J.
+ 
+ 1.         The present petition filed under  Articles 226   &amp; 227  of the
+Constitution of India1 assails the Order dated 10.12.2018 passed by the
+Ld. Debt Recovery Appellate Tribunal2 in Appeal No. 144/2018 in
+S.A. No. 40/2017 titled as &quot;The Nainital Bank Ltd. vs Mohd. Kasim&quot;
+  whereby the Ld. DRAT set aside the order dated 22.03.2018 passed by
+
+ 1 
+    Constitution
+ 2 
+    DRAT
+
+
+
+
+ W.P. (C) 13954/2018                                         Page 1 of 17 
+ the Ld. Debt Recovery Tribunal3 and upheld the auction sale of one of
+the Petitioner&#x27;s properties conducted by Respondent No. 1 in favour of
+Respondent No. 2.
+  BRIEF FACTS:
+ 
+ 2.     The brief facts leading to the present petition are a bit chequered.
+  3.     The Petitioner had availed certain loans from the Respondent
+Bank and for the same, had mortgaged two properties. Due to non-
+payment of dues, the loan accounts of the Petitioner were declared Non-
+Performing Accounts4 and a notice under Section 13(2) of the
+Securitisation        and   Reconstruction   of   Financial    Assets    and
+Enforcement of Security Interest Act, 20025 came to be issued against
+the Petitioner on 03.10.2013.
+  4.     Consequent to taking possession of the mortgaged properties by
+the Respondent Bank, the Petitioner preferred an application bearing
+S.A. No. 79/2014 before the Ld. DRT.
+  5.     Vide order dated 29.12.2015, the Ld. DRT disposed of the
+application with a direction to deposit the outstanding dues with 15%
+simple interest by way of equal monthly installments by 31.03.2016. It
+was also directed that in case of any default on the part of the Petitioner,
+the Respondent Bank would be at liberty to proceed further under the
+ SARFAESI Act .
+  6.     Pursuant to the passage of the said order, the Petitioner was unable
+to make the payment as directed by the Ld. DRT.
+ 
+ 3 
+   DRT
+ 4 
+  NPA
+ 5 
+  SARFAESI Act
+
+
+
+
+ W.P. (C) 13954/2018                                              Page 2 of 17 
+   7.        On 20.07.2016, the Petitioner approached the bank for a One Time
+Settlement6. By communication dated 30.07.2016, the Respondent Bank
+accepted the Petitioner&#x27;s request in the following terms:
+ 
+           &quot;In this connection, we inform you that the matter was placed before
+          higher authorities who after, observing the circumstances of the case
+          and broad parameter of Recovery Policy of the Bank, in principal
+          agree to accept Rs. 2.50 Crore (Rupees Two Crore Fifty Lac) towards
+          full and final settlement of Bank&#x27;s dues involved in the accounts M/S
+          Deepali Electrical Pvt Ltd &amp; M/s Times International Traders, on
+          following terms and conditions. However the final decision will be
+          communicated after clearance from competent authority which please
+          note.
+ 
+           THAT Rs 2.15 Crore shall be deposited within 30 days from the date
+          of this letter including Rs. 25.00 Lac (Rupees Twenty five Lac) which
+          you have already deposited with the Branch on 10.06.2016.
+ 
+           THAT Rs. 35 Lac (Rupees Thirty Five Lac) i.e. the remaining amount
+          shall be deposited within 90 days thereafter.
+ 
+           THAT the original document/Title Deeds of the one mortgaged
+          property i.e. industrial property situated at KH No-16/19, Sewa Dham
+          Road, Mandoli, Delhi-110092 will be released only after deposit of Rs
+          2.15 Crore within 30 days as mentioned aforesaid.
+ 
+           The original document/ Title Deeds another mortgaged property i.e.
+          residential property i.e. flat at G-87, Azad apartment Delhi will be
+          released only after depositing the final payment of compromise
+          amount i.e. Rs. 35 Lac before the aforementioned stipulated period of
+          90 days.
+ 
+           However, please also note that the said compromise is without
+          prejudice to the Bank&#x27;s legal right towards this NPA Account and if
+          there is a single default in payment of compromised amount within
+          stipulated period, bank will withdraw all the concessions, granted in
+          the compromise and will be free to take suitable action for recovery of
+          bank&#x27;s dues at your cost and responsibility.
+ 
+           To remove all, doubts it is made amply clear that in case of a single
+          default by the party (Borrower/ Guarantor) to honor the terms and
+          conditions of compromise proposal aforesaid, Bank reserves its right
+
+ 6 
+    OTS
+
+
+
+
+ W.P. (C) 13954/2018                                                        Page 3 of 17 
+            to institute legal action/ recovery action for its dues and to proceed
+           under law.&quot;
+ 
+ 8.         As per the OTS terms, the Petitioner made a payment of Rs. 2.15
+crores to the Respondent Bank. Consequent to this payment, on
+12.08.2016, the Respondent released the documents relating to the
+commercial property bearing No. KH No. 16/19 Sewa Dham Road,
+Mandoli, Delhi-1100927.
+  9.         The Petitioner, however, was unable to carry out the remaining
+payments, resulting in the Respondent Bank withdrawing the OTS vide
+letter dated 24.02.2017 in the following terms:
+ 
+            &quot;Reference is made to the compromise letter dated 30.07.2016,
+           relating to NPA Accounts of Dedpali Electricals Private Limited and
+           Times International Traders, wherein the concessions were granted by
+           the Bank against the total dues on the said accounts. It was decided
+           that you have to deposit Rs. 250.00 Lac within the stipulated period
+           and the same was duly accepted by all the constituents of the
+           accounts.
+ 
+            It is unfortunate to note that you have failed to observe the terms of
+           compromise and consequently failed to deposit the compromised
+           amount within the timeframe stipulated in the said compromise letter.
+ 
+            Further, it is communicated that the concessions granted by the Bank
+           against the terms of compromise under reference stands withdrawn
+           and the proceeding under SARFAESI against the secured asset has
+           been initiated solely at your cost and expenses.
+ 
+            To avoid any future unpleasant situations, it is advised to repay the
+           balance dues of the Bank as per the demand notice dated 03.10.2013
+           along with interest (up-to-date as well as future), costs and expenses.&quot;
+ 
+ 10.        After the cancellation, the Bank re-initiated proceedings under the
+ SARFAESI Act  and pursuant to the same, a Court receiver appointed by
+
+ 7 
+     Property No. 1 
+
+
+
+
+ W.P. (C) 13954/2018                                                          Page 4 of 17 
+ Ld. ACMM, Karkardooma Courts, issued notice for taking physical
+possession of the second property being Residential Flat No. A-87,
+Third Floor, Azad Apartments, IP Extension, Delhi-1100928, against
+which, the Petitioner preferred S.A. No. 40/2017 before the Ld. DRT.
+  11.        During the proceedings of S.A. No. 40/2017 on 18.03.2017, the
+Petitioner deposited Rs. 5 lakhs by direct deposit and undertook to pay
+Rs. 12 lakhs by 31.03.2017, with the remaining Rs. 15 lakhs to be paid
+within one month from the date of the order. The order also directed that
+these payments carry simple interest at 15% per annum from the date of
+default, failing which the Respondent Bank was entitled to take
+possession of the property without further order. Accordingly, S.A. No.
+40/2017 was disposed of.
+  12.        Impugning the order dated 18.03.2017, the Respondent Bank
+preferred Appeal No. 192/2017 before Ld. DRAT. Vide its order dated
+26.04.2017, Ld. DRAT issued notice and was pleased to stay the
+operation of the order dated 18.03.2017 in S.A. No. 40/2017 of the Ld.
+DRT.
+  13.        The Respondent Bank thereafter proceeded to auction the Property
+No. 2/ Residential property on 07.07.2017 for a sale consideration of Rs.
+96.65 lakhs to Respondent No. 2, being the successful auction purchaser.
+  14.        Vide order dated 16.08.2017, the Ld. DRAT remanded the matter
+back to the Ld. DRT for a fresh consideration of S.A. No. 40/2017,
+which was disposed of vide order dated 18.03.2017 by the Ld. DRT. The
+Ld. DRAT, however, in the said order dated 16.08.2017 noted that with
+
+
+ 8 
+     Residential property/ Property No. 2 
+
+
+
+
+ W.P. (C) 13954/2018                                             Page 5 of 17 
+ respect to the prayer for maintaining the status quo in respect of the
+Residential property/ Property No. 2 which already stood sold but
+awaited delivery of possession to Respondent No. 2, the Petitioner was at
+liberty to move an appropriate application in that respect before the Ld.
+DRT. Liberty was also granted to the Petitioner to seek a declaration in
+respect of the sale being declared illegal. The Ld. DRAT, while passing
+the said order, was cautious enough to record that no view was expressed
+on the &quot;auction part&quot; of the litigation.
+  15.    Following the remand of S.A. No. 40/2017 and after hearing both
+parties in I.A. No. 1580/2017, on 30.08.2017, the Ld. DRT noted that the
+Petitioner had immediately paid Rs. 2.15 crores out of the agreed OTS
+amount of Rs. 2.50 crores. The remaining Rs. 35 lakhs could not be paid
+on time due to factors including demonetization, but was subsequently
+cleared during the pendency of the S.A. and the appeal before the Ld.
+DRAT. The Ld. DRT also recorded that the Respondent Bank received
+Rs. 67,500/- as interest for the delayed payment. After considering the
+matter in full, the Ld. DRT held that transferring possession of the
+residential property to Respondent No. 2, despite full payment by the
+Petitioner, would cause irreparable harm. Accordingly, the interim stay
+granted earlier was made absolute, and the Respondent Bank was
+restrained from handing over possession. The Ld. DRT found the auction
+was conducted lis pendens, justifying its intervention.
+  16.    Aggrieved by the order dated 30.08.2017, the Respondent Bank
+filed Misc. Appeal No. 395/2017 before the Ld. DRAT. By its order
+dated 30.01.2018, the Ld. DRAT allowed the impleadment of
+Respondent No. 2/ the auction purchaser, in S.A. No. 40/2017, which
+
+
+
+ W.P. (C) 13954/2018                                           Page 6 of 17 
+ was pending before the Ld. DRT. With the consent of all parties, the Ld.
+DRAT also directed the Ld. DRT to dispose of S.A. No. 40/2017 within
+a maximum period of six weeks.
+  17.    In compliance with these directions, the Ld. DRT, after hearing
+the parties, vide Order dated 22.03.2018, allowed S.A. No. 40/2017 and
+held as follows:
+ 
+        &quot;12. Now, the points for determinations are for allowing the applicant
+       to deposit the OTS amount within a period of 60 days and set aside
+       the SARFAESI proceedings under  Section 13(2)  &amp;  13(4)  and the sale
+       conducted by the respondent bank during the pendency of the appeal
+       before the Hon&#x27;ble DRAT, Delhi as prayed for?
+ 
+                                        xxxxx
+
+         26. In the result, the SA is allowed and the auction conducted by the
+       respondent no.1 bank is hereby set aside directing the respondent bank
+       to refund the amount of auction to the auction purchaser with interest
+       @9% p.a. from the date of deposit till return. Before parting of the
+       case, I am of the considered opinion that security applicant who
+       defaulted cannot go scot free as he is to scale with cost of the auction
+       conducted by the respondent no.1 bank. He should be directed to pay
+       interest @15% p.a. from 30.11.2016 till payment on reducing balance
+       basis. Respondent no. 1 bank shall file the affidavit of expenses and
+       the amount recoverable for delayed period as stated above within one
+       week and serve a copy of the affidavit to the security applicant or his
+       counsel. On such service of affidavit, the security applicant shall pay
+       the amount as stated above in the affidavit of the bank within 10 days
+       thereafter.&quot;
+ 
+ 18.    The Order dated 22.03.2018 of the Ld. DRT was challenged by
+the Respondent Bank vide Appeal No. 144/2018, culminating in the
+impugned order dated 10.12.2018. After reviewing the entire record, the
+Ld. DRAT allowed the appeal, holding that the Respondent Bank was
+entitled to succeed as the Petitioner had not challenged the legality of the
+
+
+
+
+ W.P. (C) 13954/2018                                                      Page 7 of 17 
+ measures taken under the  SARFAESI Act , but had only sought for
+liberty to pay the dues in instalments.
+  19.    The Ld. DRAT concluded that the Petitioner had effectively
+abandoned any challenge to the notices issued under  Sections 13(2)  and
+ 13(4)  of the SARFAESI Act and failed to comply with the payment
+timeline, resulting in the Bank taking possession of the Residential
+property.
+  20.    The Ld. DRAT also criticized the Respondent Bank for offering
+the OTS despite having a favorable Order dated 29.12.2015. The Ld.
+DRAT further held that the Ld. DRT had erred in granting relief by
+cancelling a legally conducted auction, especially when no such relief
+had been specifically sought. The Ld. DRAT found that the Petitioner
+had no valid cause of action to invoke  Section 17(1)  of the SARFAESI
+Act the second time, after having &quot;abandoned the legal fight in the first
+round where he accepted the disposal of his first SA with a direction to
+him to clear the bank&#x27;s entire dues in instalments&quot;.
+  21.    Furthermore, the Ld. DRAT held that the Respondent Bank&#x27;s
+decision not to condone the delay in OTS payment was within its
+discretion and not subject to judicial scrutiny. It noted that the Ld. DRT
+had extended &quot;undue, unmerited, and undeserving&quot; benefits to the
+Petitioner at various stages, disregarding public interest.
+  22.    Rejecting the Petitioner&#x27;s request for further indulgence, the Ld.
+DRAT remarked that granting such relief would effectively reward a
+defaulter and set a poor precedent. Accordingly, the appeal was allowed,
+the Learned DRT&#x27;s order cancelling the auction was set aside, possession
+of the property was directed to be handed over to Respondent No. 2, and
+
+
+
+ W.P. (C) 13954/2018                                            Page 8 of 17 
+ the Respondent Bank was permitted to recover the remaining dues as if
+the OTS had never been offered.
+  SUBMISSIONS OF THE PETITIONER:
+ 
+ 23.       The Ld. counsel for the Petitioner would submit that the Petitioner
+fulfilled all substantial obligations under the OTS scheme, having paid
+Rs. 2.15 crores within the stipulated time and later depositing the
+remaining Rs. 35 lakhs along with penal interest of Rs. 2 lakhs. The
+delay in remitting the balance was purely due to the nationwide financial
+disruption caused by the demonetization announced on 08.11.2016.
+   24.       The Ld. counsel for the Petitioner would endorse the decision and
+findings of the Ld. DRT and submit that the despite receiving nearly the
+full settlement amount, the Respondent Bank unilaterally and arbitrarily
+withdrew the OTS without adequately considering the Petitioner&#x27;s
+requests for extension. It was argued that the Bank proceeded to auction
+the Residential property, even though full payment (including delayed
+interest) had been made in accordance with the DRT&#x27;s directions. This
+conduct was wholly unreasonable and violated the settled doctrine of
+legitimate expectation, as upheld in  Ambience Pvt. Ltd. v. Punjab &amp;
+Sind Bank9 . 
+    25.       The Ld. counsel for the Petitioner would further submit that the
+Ld. DRT, in its judgment dated 22.03.2018, rightly held that time was
+not of the essence in the OTS agreement, particularly under the
+prevailing extraordinary circumstances. The Tribunal found that minor
+delays due to demonetization could not justify the forfeiture of
+
+ 9 
+    (2014) 208 DLT 459
+
+
+
+
+ W.P. (C) 13954/2018                                               Page 9 of 17 
+ settlement rights. Relying on, inter alia,  P. D&#x27;Souza v. Shondrilo
+Naidu10  and  SBI v. Vijay Kumar11 , the Ld. DRT concluded that
+acceptance of substantial payments estopped the Bank from resiling from
+the settlement, though there was delay but it was not relevant, it being
+non-essential.  
+  26.       The Ld. counsel for the Petitioner would also submit that the
+auction was conducted while the appeal was pending before the Ld.
+DRAT, and the Auction Purchaser was fully aware of the ongoing
+litigation. The Ld. DRAT itself had recorded in order dated 16.08.2017
+that any rights of the Auction Purchaser would be subject to the final
+outcome of the pending proceedings. The auction purchaser cannot claim
+bonafide status, and the sale lacks legal sanctity.
+  27.       The Ld. counsel for the Petitioner would further submit that
+despite the Ld. DRT&#x27;s well-reasoned judgment setting aside the auction
+and recognizing the Petitioner&#x27;s full compliance, the Ld. DRAT
+reinstated the sale without due consideration of its own remand order
+dated 16.08.2017. This amounts to a grave miscarriage of justice and
+violates established principles of law, including the doctrine of estoppel
+and fair adjudication.
+  28.       The Ld. counsel for the Petitioner would further submit that the
+Ld. DRT has the express power to invalidate a sale if it finds the
+creditor&#x27;s actions to be unlawful. Upon remand from the Ld. DRAT, the
+Ld. DRT rightly exercised this power and quashed the auction, ordering
+a refund to the auction purchaser with interest. The Ld. DRAT, however,
+
+ 10 
+     (2004) 6 SCC 649
+ 11 
+     (2007) 11 SCC 369
+
+
+
+
+ W.P. (C) 13954/2018                                            Page 10 of 17 
+ overlooked this clear statutory mandate and reversed the relief without
+basis.
+  29.      The Ld. counsel for the Petitioner would also submit that the
+Respondent Bank suffered no financial loss, having received the full
+OTS amount with interest. Yet, it chose to enforce auction proceedings
+in an arbitrary and disproportionate manner. The Petitioner was deprived
+of his only Residential home despite fulfilling his obligations, a result
+wholly inconsistent with the spirit of justice.
+  SUBMISSIONS OF THE RESPONDENT:
+ 
+ 30.      The Ld. counsel for the Respondent would endorse and justify the
+decision and finding in the impugned Order made by the Ld. DRAT and
+submit that the Respondent Bank&#x27;s recovery actions, including
+possession notices and sale proceedings, were all undertaken strictly in
+compliance with statutory provisions and due process.
+  31.      The Ld. counsel for the Respondent would further submit that,
+despite the Bank&#x27;s good-faith approval of the OTS to facilitate amicable
+resolution, the Petitioner failed to honour the terms of the settlement.
+This breach, despite multiple reminders, necessitated revocation of the
+OTS and reinstatement of recovery proceedings, reinforcing that the
+default lies solely with the Petitioner.
+  32.      The Ld. counsel for the Respondent would also submit that in light
+of the Petitioner&#x27;s continued default, the Bank&#x27;s transparent conduct, and
+issuance of Recovery Certificates by the competent authority, the present
+writ petition is devoid of merit.
+  ANALYSIS &amp; DECISION:
+ 
+
+
+
+ W.P. (C) 13954/2018                                             Page 11 of 17 
+  33.       This Court has carefully considered the submissions made by the
+parties and meticulously perused the documents on record.
+  34.       While adjudicating the present petition, this Court remains
+mindful of the scope and limits of its power and discretion under  Article
+226  of the Constitution.  In this context, the Hon&#x27;ble Supreme Court, in
+ M.S. Sanjay v. Indian Bank12 , in a similar case, succinctly summarized
+the applicable legal principles governing the exercise of such
+jurisdiction. The Relevant Paras are extracted below: 
+ 
+           &quot;9. It is well settled that interference by the Writ Court for mere
+          infraction of any statutory provision or norms, if such in-fraction has
+          not resulted in injustice is not a matter of course.  In the case of  Shiv
+          Shanker Dal Mills v. State of Haryana , (1980) 2 SCC 437, the dealers
+           in that case  had paid market fees at the increased rate of 3%, which
+          was raised from the original 2 per cent under Haryana Act 22 of 1977. 
+           The excess of 1 per cent over the original rate was declared ultra
+          vires by this Court in the case of  Kewal Krishna Puri v. State of
+          Punjab , (1980) 1 SCC 416. The excess of 1 per cent over the original
+          rate having been declared ultra vires, became refundable to the
+          respective dealers from whom they were recovered by the Market
+          Committee concerned. The demand for refund of the excess amounts
+          illegally recovered from them not having been complied with, the
+          dealers filed Writ Petitions under  Article 32  and  Article 226  of
+          the Constitution for a direction to that effect to the Market Committee
+          concerned. The Market Committees contended that although the
+          refund of the excess collections might be legally due to the dealers,
+          many of them had in turn recovered this excess percentage from the
+          next purchasers. While disposing of the petition and laying down
+          guidelines, this Court held as under: 
+                  &quot; Article 226  grants an extraordinary remedy, which is
+                essentially discretionary, although founded on legal injury.
+                It is perfectly open for the court, exercising this flexible
+                power, to pass such order as public interest dictates and
+                equity projects. Courts of equity may, and frequently do,
+                go much further both to give and withhold relief in
+                furtherance of the public interest than they are accustomed
+                to go where only private interests are involved.
+ 
+ 12 
+      2025 SCC OnLine SC 368
+
+
+
+
+ W.P. (C) 13954/2018                                                            Page 12 of 17 
+               Accordingly, the granting or withholding of relief may
+              properly be dependent upon considerations as of public
+              interest.&quot;
+         10. It has been rightly observed that legal formulations cannot be
+       enforced divorced from the realities of the fact situation of the case.
+       While administering law it is to be tempered with equity and if the
+       equitable situation demands after setting right the legal formulations
+       not to take it to the logical end, the High Court would be failing in its
+       duty if it does not notice equitable consideration and mould the final
+       order in exercise of its extraordinary jurisdiction. Any other approach
+       would render the High Court a normal Court of Appeal, which it is
+       not. It is a settled principle of law that the remedy under
+        Article 226  of the Constitution of India is discretionary in nature and
+       in a given case, even if some action or order challenged in the petition
+       is found to be illegal and invalid, the High Court while exercising its
+       extraordinary jurisdiction thereunder can refuse to upset it with a view
+       to doing substantial justice between the parties.&quot;
+                                                            (Emphasis supplied)
+
+  35.    An examination of the record in the present case reveals several
+undisputed and concerning facts, which, though not exhaustive, may be
+summarised as follows:
+  (a). Following the Petitioner&#x27;s initial default, the Respondent Bank
+      issued a demand notice dated 03.10.2013 under  Section 13(2)  of the
+      SARFAESI Act, calling upon the Petitioner to clear the outstanding
+      dues.
+  (b). Upon the Petitioner&#x27;s failure to comply, the Bank invoked its rights
+      under  Section 13(4)  of the SARFAESI Act and took possession of
+      the secured assets.
+  (c). Aggrieved by this action, the Petitioner approached the Ld. DRT.
+        Vide order dated 29.12.2015, the Ld. DRT directed the Petitioner to
+      deposit the outstanding dues along with 15% simple interest in
+      equal monthly instalments, to be paid by 31.03.2016. It was further
+
+
+
+
+ W.P. (C) 13954/2018                                                       Page 13 of 17 
+       directed that failure to comply would entitle the Bank to proceed
+      under the  SARFAESI Act .
+  (d). The Petitioner failed to comply with the said direction and did not
+      make the required payments within the stipulated period.
+  (e). The Bank despite having a favourable order from the Ld. DRT,
+      considered the Petitioner&#x27;s request for the OTS.
+  (f). Although the Petitioner made partial payment under the OTS, he
+      failed to deposit the balance amount of Rs. 35 lakhs by the
+      stipulated deadline under the OTS, i.e., 30.11.2016.
+  (g). Despite this breach, the Respondent Bank extended further leniency
+      by agreeing to accept the delayed payment. However, the cheques
+      subsequently issued by the Petitioner were dishonoured.
+  (h). After allowing a grace period of over two and a half months with no
+      resolution, the Respondent Bank withdrew from the OTS and
+      resumed proceedings under the  SARFAESI Act .
+  (i). Despite this series of defaults, the Petitioner once again approached
+      the Ld. DRT by filing S.A. No. 40/2017, seeking to halt the
+      securitisation process by requesting, inter alia, an additional 60
+      days to deposit the outstanding Rs. 35 lakhs.
+  (j). Despite the default, the Petitioner was granted yet another
+      opportunity by the Ld. DRT vide order dated 18.03.2017, which
+      extended the deadline effectively by one month further and
+      permitted payment in instalments.
+  (k). The Petitioner again failed to meet this revised schedule, ultimately
+      making the payment in six instalments, the last of which was on
+      17.07.2017.
+ 
+
+
+ W.P. (C) 13954/2018                                              Page 14 of 17 
+  (l). Following the remand and intervention by the Ld. DRAT, the Ld.
+      DRT continued to show leniency to the Petitioner. By its Order
+      dated 30.08.2017, the Ld. DRT restrained the Bank from giving
+      physical possession and directed to expedite hearing of the S.A. No.
+      40/2017.
+  (m). Ultimately, despite the Petitioner&#x27;s repeated defaults and the
+      absence of any legal bar to the auction dated 07.07.2017, the Ld.
+      DRT, by its order dated 22.03.2018, granted relief to the Petitioner
+      by setting aside the said auction sale.
+  36.    It is thus evident that since the issuance of the initial demand
+notice under  Section 13(2)  of the SARFAESI Act on 03.10.2013, the
+Petitioner has consistently remained in default, including wilful non-
+compliance with the binding directions issued by the Ld. DRT in its
+order dated 29.12.2015.
+  37.    The Petitioner voluntarily entered into the OTS arrangement with
+the Respondent Bank, only to default once again, failing to adhere to
+both the original and extended payment timelines.
+  38.    Significantly, by accepting the Ld. DRT&#x27;s order dated 29.12.2015,
+without challenge, the Petitioner effectively abandoned any objection to
+the validity of the initial actions taken by the Respondent Bank under
+ Sections 13(2)  and  13(4)  of the SARFAESI Act. Having done so, the
+Petitioner was legally barred from later contesting the subsequent
+proceedings initiated by the Respondent Bank following the revocation
+of the OTS.
+  39.    It must also be underscored that the Ld. DRT&#x27;s order dated
+29.12.2015 remained valid, binding, and enforceable at all times. The
+
+
+
+ W.P. (C) 13954/2018                                            Page 15 of 17 
+ mere fact that the Respondent Bank, as a matter of commercial prudence,
+agreed to an OTS did not and could not negate or override the authority
+and finality of that judicial determination.
+  40.    Yet, notwithstanding the Petitioner&#x27;s repeated and uncontested
+defaults, and the continued enforceability of the order dated 29.12.2015,
+the Petitioner ultimately secured favourable relief through the Ld. DRT&#x27;s
+order dated 22.03.2018, an outcome that appears incongruent with both
+the factual and legal circumstances of the case.
+  41.    The Ld. DRT vide its order dated 22.03.2018 granted relief to the
+Petitioner by holding that Respondent No. 2 was not a bonafide
+purchaser, as he was allegedly aware of the ongoing litigation between
+the Petitioner and the Respondent Bank. In doing so, the Ld. DRT
+overlooked the undisputed fact that there was no legal impediment to the
+Respondent Bank and Respondent No. 2 from conducting the auction
+sale at the relevant time. Although litigation was pending, a closer
+examination makes clear that the filing of the second Securitisation
+Application (S.A. No. 40/2017) was unmerited and an abuse of the legal
+process by the Petitioner, therefore, the same should not have benefited
+the Petitioner.
+  42.    Furthermore, the OTS extended by the Respondent Bank was
+purely a concession extended to the Petitioner. Upon the Petitioner&#x27;s
+failure to fulfil his obligations under the OTS, despite being granted
+additional time, the Respondent Bank lawfully withdrew from the
+settlement. The letter dated 30.07.2016 specifically empowered the
+Respondent Bank to do so in case of default. Thus, it was entirely within
+the discretion of the Respondent Bank to grant or deny such extensions.
+ 
+
+
+ W.P. (C) 13954/2018                                           Page 16 of 17 
+  In the absence of any legal mandate compelling the Bank to accept
+further delayed payments, the Ld. DRT&#x27;s intervention by granting further
+extensions constituted an overreach of its jurisdiction. This Court also
+believes that such an extension, effectively, resulted in a rewriting of the
+terms of the OTS, which is not permitted in law.
+  43.    Significantly, in S.A. No. 40/2017, the Petitioner neither
+challenged the Bank&#x27;s revocation of the OTS nor the subsequent auction
+sale in favour of Respondent No. 2. Despite this, the Ld. DRT proceeded
+to grant relief by setting aside the auction sale through its order dated
+22.03.2018. Such relief was clearly against the law.
+  44.    In light of the foregoing analysis, this Court is of the considered
+view that the order dated 22.03.2018 passed by the Ld. DRT is legally
+unsustainable and does not withstand judicial scrutiny. Consequently, in
+the present challenge, no grounds are made out by the Petitioner to
+warrant interference with the impugned order dated 10.12.2018 passed
+by the Ld. DRAT, which merits affirmation.
+  45.    Accordingly, the present Petition is dismissed.
+  46.    No order as to costs.
+ 
+
+
+                                          SUBRAMONIUM PRASAD, J.
+ 
+
+                           HARISH VAIDYANATHAN SHANKAR, J.
+  JUNE 04, 2025/sm
+
+
+
+
+ W.P. (C) 13954/2018                                             Page 17 of 17 
+  

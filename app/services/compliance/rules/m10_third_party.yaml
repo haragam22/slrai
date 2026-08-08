@@ -28,6 +28,7 @@ rules:
         expression: "sa_applicant_type == 'THIRD_PARTY_ATS'"
         result_if_true: REVIEW
         severity: ADVISORY
+        outcome_favors: NEUTRAL  # standing genuinely contested either way — not itself evidence for either side
         message_template: "SA applicant is a third party holding an Agreement to Sell — not the borrower or guarantor. Standing under Section 17 of the SARFAESI Act is contested for ATS holders. Some High Courts have allowed such SAs (Delhi HC, Madras HC) on the basis that the applicant is a person aggrieved by the measures. Other benches have denied standing. DRT will determine standing as a preliminary issue. Bank should prepare to contest maintainability."
         judgment_tags: [celir_llp_bafna_motors, ats_standing]
         ground_codes: [THIRD_PARTY_ATS]
@@ -49,6 +50,7 @@ rules:
         expression: "ats_simultaneous_mortgage == True"
         result_if_true: FAIL
         severity: HIGH
+        outcome_favors: BANK  # fraud/collusion defense — weakens third party's claim
         message_template: "Agreement to Sell (ATS) and mortgage deed executed on the same date ({ats_date} = {mortgage_date}). Bank will allege that the ATS was executed with knowledge of the mortgage and in collusion with the borrower to defeat the bank's security interest. The ATS holder cannot claim ignorance of the mortgage when both were executed simultaneously. This significantly weakens the third party's claim."
         judgment_tags: [ats_mortgage_collusion]
         ground_codes: [THIRD_PARTY_ATS]
@@ -70,6 +72,7 @@ rules:
         expression: "ats_payments_made_to_loan_account == True"
         result_if_true: PASS
         severity: ADVISORY
+        outcome_favors: BORROWER  # mitigates the bank's fraud allegation — strengthens third party's claim
         message_template: "ATS holder has made payments directly to the bank's loan account (total paid: Rs. {ats_advance_paid}). This demonstrates bona fide conduct and good faith. Courts have treated payment by the ATS holder into the loan account as evidence that the bank had knowledge of the arrangement and implicitly accepted the ATS holder as a de facto party to the loan servicing. This substantially mitigates the bank's fraud allegation under M10_C2."
         judgment_tags: [celir_llp_bafna_motors, ats_bona_fide_payment]
         ground_codes: [THIRD_PARTY_ATS]
@@ -91,6 +94,7 @@ rules:
         expression: "sale_certificate_issued == True and possession_given_to_auction_purchaser == True"
         result_if_true: REVIEW
         severity: HIGH
+        outcome_favors: BANK  # Celir LLP high threshold to set aside — bank-favorable
         message_template: "Sale certificate issued on {sale_certificate_date} and physical possession given to auction purchaser. The Supreme Court in Celir LLP v. Bafna Motors (2023) 13 SCC 561 held that once a sale is confirmed and possession given, the borrower's right of redemption under TPA Section 60 is extinguished. To set aside the sale at this stage requires: (1) fundamental procedural error in the auction itself, OR (2) the sale was obtained by fraud or misrepresentation. The standard for setting aside rises significantly after physical possession. Check rules M3_C6 (notice affixing), M3_C7 (auction during stay), and M3_C8 (concealment) — if any of these fire, the fundamental procedural error threshold may be met."
         judgment_tags: [celir_llp_bafna_motors, confirmed_sale_high_threshold]
         ground_codes: [AUCTION_PURCHASER, RIGHT_OF_REDEMPTION]
@@ -112,6 +116,7 @@ rules:
         expression: "sale_certificate_issued == True and possession_given_to_auction_purchaser == False"
         result_if_true: REVIEW
         severity: CURABLE
+        outcome_favors: BORROWER  # redemption window may still be open — third party's claim strengthened
         message_template: "Sale certificate issued but physical possession not yet given to auction purchaser. The right of redemption under TPA Section 60 may not yet be fully extinguished at this stage. The borrower/applicant has a window to challenge the sale through DRT before possession is handed over. Procedural defects (M3_C6, M3_C7, M3_C8) if present are more readily actionable at this stage than post-possession."
         judgment_tags: [celir_llp_bafna_motors, pre_possession_redemption_window]
         ground_codes: [RIGHT_OF_REDEMPTION, AUCTION_PURCHASER]
@@ -133,6 +138,7 @@ rules:
         expression: "previous_sa_filed == True and challenges_auction == True and challenges_demand_notice == False"
         result_if_true: PASS
         severity: ADVISORY
+        outcome_favors: BORROWER  # second SA on a fresh cause is maintainable — favors the applicant
         message_template: "A previous SA ({previous_sa_number}) was filed by the same applicant. The present SA challenges the auction and/or sale certificate — a distinct cause of action from the original SA's challenge. The Supreme Court in Oasis Dealcom Pvt. Ltd. v. Khazana Dealcomm (2016) 10 SCC 214 held that a second SA is maintainable under Section 17 where the cause of action is different. The fresh auction constitutes a fresh cause of action. Bank may contest maintainability but the Oasis Dealcom principle should be cited in rebuttal."
         judgment_tags: [oasis_dealcom, second_sa_fresh_cause]
         ground_codes: [SECOND_SA_FRESH_CAUSE]
@@ -154,6 +160,7 @@ rules:
         expression: "balance_consideration_paid_within_90_days == False"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER  # Rule 9(4) violation — sale never attained finality, redemption survives
         message_template: "Auction purchaser paid balance consideration on {balance_payment_date}, after the 90-day outer limit prescribed by Rule 9(4) of the Security Interest (Enforcement) Rules 2002 (auction date: {auction_date}). The sale did not attain statutory finality within the mandatory timeline. The borrower's right of redemption was not extinguished because the statutory conditions for vesting of title were never fulfilled."
         judgment_tags: [e_muthurathinasabathy, mathew_varghese, rule_9_4]
         ground_codes: [AUCTION_PURCHASER, RIGHT_OF_REDEMPTION]

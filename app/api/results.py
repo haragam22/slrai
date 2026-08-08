@@ -129,9 +129,9 @@ async def get_judgment_applicability(
     current_user: CurrentUser = OfficerDep,
     db: AsyncSession = DbDep,
 ) -> list[JudgmentApplicabilityResponse]:
-    """Verified (APPLICABLE/PARTIAL/NOT_APPLICABLE/LEGAL_UNCERTAINTY, Class A)
-    and similarity-retrieved (SIMILARITY_RETRIEVED, Class B) judgments —
-    see report Section A/B honesty distinction, same split shown here."""
+    """Applicability verdicts (APPLICABLE/PARTIAL/NOT_APPLICABLE/LEGAL_UNCERTAINTY)
+    for every judgment in the corpus evaluated against this case's confirmed
+    facts — single tier, no Class A/B split anymore."""
     await verify_case_bank_access(case_id, current_user, db)
 
     # JudgmentApplicability.judgment has no lazy="selectin" — explicit

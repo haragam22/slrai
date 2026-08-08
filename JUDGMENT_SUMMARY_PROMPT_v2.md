@@ -69,6 +69,7 @@ rules_sections: []
 # SLRAI ROUTING
 slrai_modules: []
 keywords: []
+retrieval_condition: ""
 
 # SOURCE
 source: ""
@@ -336,6 +337,27 @@ keywords:
   - "outer limit three months"
   - "inchoate sale"
   - "statutory finality"
+```
+
+### `retrieval_condition` — REQUIRED — NEW FIELD
+
+One sentence, under 200 characters, stating the specific factual condition
+under which this judgment applies. This is the cheap pre-filter sentence the
+pipeline checks before doing anything expensive with the full judgment —
+it must stand alone without reading HOLDING SUMMARY or any other section.
+
+**Rules:**
+- Start with "Applies when" and state the condition in plain terms
+- Must be consistent with the CONDITION: WHEN THIS JUDGMENT APPLIES section
+  and with the last sentence of HOLDING SUMMARY — same fact pattern, just
+  compressed to one line
+- Do not restate the ground code or module name alone ("Applies when
+  AUCTION_PURCHASER ground raised" is too vague) — name the actual fact
+  ("Applies when the auction purchaser paid the balance 75% after the
+  Rule 9(4) 90-day limit")
+
+```yaml
+retrieval_condition: "Applies when the auction purchaser paid the balance 75% of sale consideration more than 90 days after the auction date."
 ```
 
 ### `source` — REQUIRED
@@ -695,6 +717,11 @@ Every item must be true. If any is false, fix it before outputting.
 ☐ Keywords are specific phrases — not generic terms like "SARFAESI" or "auction"
 ☐ Keywords are phrases a lawyer would actually write in an SA filing
 
+**Retrieval condition:**
+☐ `retrieval_condition` is present, under 200 characters, one sentence
+☐ It names the actual fact pattern, not just the ground code or module name
+☐ It is consistent with CONDITION: WHEN THIS JUDGMENT APPLIES and HOLDING SUMMARY's last sentence
+
 ---
 
 ## HOW TO HANDLE JUDGMENTS THAT DON'T FIT EXISTING CATEGORIES
@@ -789,6 +816,7 @@ keywords:
   - "15 days confirmation"
   - "balance 75%"
   - "delay completion sale"
+retrieval_condition: "Applies when the auction purchaser paid the balance 75% of sale consideration more than 90 days after the auction date."
 
 # SOURCE
 source: "SC_FULL_TEXT"

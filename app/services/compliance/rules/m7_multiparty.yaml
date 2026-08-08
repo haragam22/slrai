@@ -8,6 +8,7 @@ rules:
         expression: "borrowers_served_notice < total_borrowers_in_loan"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Loan has {total_borrowers_in_loan} borrowers. Notice served on only {borrowers_served_notice}. Each unserved borrower is a separate fatal defect."
         judgment_tags: [service_defect, co_borrower_notice]
 
@@ -19,5 +20,6 @@ rules:
         expression: "guarantors_served_notice < total_guarantors_in_loan"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Loan has {total_guarantors_in_loan} guarantors. Notice served on only {guarantors_served_notice}."
         judgment_tags: [service_defect, guarantor_notice]

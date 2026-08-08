@@ -27,51 +27,106 @@ future TODO.
 
 ## Still genuinely open
 
-1. **Extraction coverage — CLOSED for `balance_payment_date` specifically,
-   but exposed a much bigger systemic gap.** `balance_payment_date` is now
-   wired end-to-end: `nlp_layer.py`'s `BATCH_USER_TEMPLATE` extracts it into
-   a new `date_facts` object, and `chain_a.py::task_nlp_extract_facts`
-   persists it (mirroring the existing `boolean_facts` loop).
+1. **Extraction coverage — date_facts is CLOSED, not open.** (Stale as of
+   2026-08-06 — this item previously said all ~16 named date fields were
+   unextracted. They are not: `nlp_layer.py`'s `BATCH_USER_TEMPLATE`
+   `date_facts` object has all 16 fields, and `chain_a.py::task_nlp_extract_facts`
+   persists every key generically, not just `balance_payment_date`. Anyone
+   reading this file before 2026-08-06 would have wasted time re-fixing an
+   already-fixed gap — checked the actual code before acting on this doc.)
 
-   While wiring this, found that **every other named date field the rule
-   engine depends on has the same gap and is NOT extracted or persisted at
-   all**: `auction_date`, `demand_notice_date`, `sale_certificate_date`,
-   `mortgage_date`, `lease_date`, `valuation_date`, `npa_classification_date`,
-   `objection_date`, `bank_reply_date`, `possession_notice_date`,
-   `sale_notice_date`, `drt_stay_order_date`, `ats_date`, `measure_date`,
-   `sa_filing_date`, `date_of_last_payment`. The template's generic
-   `"dates": [{date, context}]` array (unstructured, one entry per date
-   mentioned in a paragraph) is parsed by Claude but **never persisted to
-   any CaseFact row** — `task_nlp_extract_facts` only reads `boolean_facts`
-   and (now) `date_facts`, and nothing maps the generic `dates` array to
-   named fields. Every date-dependent computed field and YAML rule
-   (`sixty_day_period_elapsed`, `auction_gap_days`, `M1_C1`, `M3_C1`, etc.)
-   currently can only be populated by a human confirming the fact manually
-   in the workbench — there is no AI-extraction path for any of them.
+2. **`boolean_facts` field names didn't match ~94% of YAML rule
+   preconditions — found and closed 2026-08-06 (full audit, not a partial
+   pass).** Built the complete set of every raw (non-computed) field name
+   referenced across `app/services/compliance/rules/*.yaml` — both `field:`
+   preconditions and bare identifiers inside `expression:` strings, minus
+   `COMPUTED_FIELD_RESOLVERS` entries (those derive from other confirmed
+   dates/facts at rule-engine time, not from extraction) — 52 fields total.
+   Diffed against every key `nlp_layer.py`'s `BATCH_USER_TEMPLATE` actually
+   extracts. First pass matched only 2 of 32 checked; the full 52-field diff
+   found 12 more misses the first pass didn't catch, including two
+   deceptively named ones that read like dates but are booleans
+   (`pending_sa_existed_at_auction_date`, `account_standard_at_auction_date`
+   — both compared with `== True`/`== False` in expressions, not date math)
+   and one genuinely distinct date the first pass conflated with an existing
+   field (`notice_service_date` ≠ `demand_notice_date` — service date can
+   trail issue date by the postal delay, and `M1_C5`/`M1_C7` compare them
+   directly). All 52 now have a matching schema slot — `boolean_facts`,
+   `date_facts`, a new `numeric_facts` dict, and four new flat enum/string
+   fields (`sa_applicant_type`, `notice_service_mode`, `asset_type`,
+   `measure_type`), all persisted generically in `chain_a.py`.
+   `authorized_officer_name` persists under its own exact name via
+   `aggregate_metadata()` (it's a direct YAML field, M1_C8 — different
+   handling from `drt_jurisdiction`/`sa_number`, which sync to `Case`
+   columns instead, see item 3 below).
 
-   This is a pre-existing gap from an earlier phase, not something
-   introduced by adding `balance_payment_date`. Fixing it properly means
-   adding all ~16 fields to `date_facts` (or a similar named structure) and
-   is a deliberate scope decision, not something to do silently as a
-   side-effect of one field's fix.
+   Did NOT rename or remove the old mismatched keys that were already
+   there (`notice_served`, `valuation_disputed`, `msme_status_claimed`,
+   etc.) — found a **third** independent schema in `app/api/workbench.py`'s
+   `REQUIRED_FIELDS`/`FIELD_LABELS` that references some of those old names
+   for workbench UI display, and renaming without auditing that call site
+   risked breaking it silently. Net result: three fact-schema sources
+   (`nlp_layer.py` prompt, YAML preconditions, workbench UI labels) still
+   exist independently and still aren't unified — this patch closes the
+   extraction-coverage gap, it does not eliminate the architectural drift
+   risk of having three lists. A real `CaseFactSchema` single source of
+   truth is the actual fix; not done here, out of scope for an additive
+   patch.
 
-2. **New ground code — decided NOT needed.** The source doc's Scenario A
+   **Not done**: full semantic verification of all 52 fields' meaning
+   against the actual SARFAESI Act/Rules text (only Rule 8/9-tied fields —
+   auction notice, valuation, reserve price — were spot-checked against
+   `docs/statutes/sarfaesi_rules.txt` and confirmed correct). Coverage
+   (does a schema slot exist) and semantic correctness (does the slot mean
+   what the statute means) are two different checks — this closed the
+   first, not the second.
+
+3. **Case identity fields (`case_ref`, `drt_bench`, `loan_account_number`,
+   `principal_amount`) showing blank in reports — two distinct causes found
+   2026-08-06.**
+   - `case_ref`/`drt_bench`: NLP *does* extract this data (`meta_sa_number`,
+     `meta_drt_jurisdiction` via `aggregate_metadata()`) but it was persisted
+     only to `case_facts` under `meta_*` names and never copied to the
+     `Case.case_ref`/`Case.drt_bench` columns the report template reads
+     directly (`report.html.j2` uses `case.case_ref`, not a `case_facts`
+     lookup). Fixed: `aggregate_metadata()` now backfills those two Case
+     columns when they're empty, without overwriting officer-entered values.
+   - `loan_account_number`/`principal_amount`: genuinely never extracted —
+     no field for either anywhere in `nlp_layer.py`'s schema. These remain
+     manual-entry-only (`CreateCaseRequest`) unless/until extraction
+     coverage is added for them — not done here, needs its own scope
+     decision same as item 2.
+
+4. **`load_confirmed_facts()` only reads `human_confirmed=True` rows** —
+   confirmed by design, not a bug: no NLP-extracted fact (regardless of
+   correct field name) reaches the compliance rule engine until a human
+   confirms it in the workbench. This means a case that goes through
+   extraction but skips workbench review will show "Unknown" for every
+   precondition even with a fully-fixed field schema — that's the
+   human-in-the-loop safety gate working as intended for a legal-risk
+   platform, not something to route around. Noting it here because it
+   explains report symptoms that look identical to the field-name bug above
+   but have a different, non-bug cause.
+
+5. **New ground code — decided NOT needed.** The source doc's Scenario A
    suggested `BALANCE_PAYMENT_DELAY` as a possible new ground code. Resolved
    without one: `M10_C7`'s `ground_codes` reuses `AUCTION_PURCHASER` and
    `RIGHT_OF_REDEMPTION` (matches the source doc's own stated resolution
    "expand `AUCTION_PURCHASER` and `RIGHT_OF_REDEMPTION` to cover it").
 
-3. **`celir_llp_bafna_motors.md` does not exist yet.** The E. Muthurathinasabathy
-   fixture's `RELATIONSHIP TO OTHER JUDGMENTS` section references and
-   distinguishes Celir LLP v. Bafna Motors, and per the source doc's item C,
-   `celir_llp_bafna_motors.md` should get a `Distinguished by:` line added to
-   its own `RELATIONSHIP TO OTHER JUDGMENTS` section. That file is part of the
-   real 75+7 corpus you're supplying after H10 testing — can't write it now
-   without fabricating a judgment summary. Do this when the real corpus lands.
+6. **`celir_llp_bafna_motors.md` — CLOSED, file exists now** (as
+   `celir_llp_v_bafna_motors_supreme_court_2023.md`, part of the 69-file
+   corpus). The `Distinguished by:` cross-reference line item from the
+   original note still hasn't been verified as added — worth a quick check
+   next time either file is touched, but the "can't write it, doesn't
+   exist" blocker is gone.
 
-4. **`sarfaesi_law_wiki.md` token budget** — currently ~79,500 tokens against
-   a 65,000 budget (see `tests/test_judgment_retrieval.py::test_wiki_token_budget`,
-   marked `xfail` with this same note). Pre-existing from an earlier phase's
-   `build_law_wiki.py` output, not introduced in H7. Needs a real decision
-   (trim statute text? raise the budget? split into two loaded contexts?) —
+7. **`sarfaesi_law_wiki.md` token budget — RAISED 2026-08-06, not trimmed.**
+   Was ~76,700 tokens against a 65,000 budget (`xfail` in
+   `tests/test_judgment_retrieval.py::test_wiki_token_budget`). Budget raised
+   to 85,000 (and third_party_law_wiki.md's to 60,000) rather than trimming
+   statute text — this wiki became compulsory context in every
+   `applicability.py` call (not just `nlp_layer.py`) as of the same date, so
+   trimming it now affects judgment-relevance reasoning quality, not just
+   extraction. Still full_text=True by design for legal completeness;
    not something to silently truncate.

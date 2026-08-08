@@ -39,6 +39,7 @@ keywords:
   - "15 days confirmation"
   - "balance 75%"
   - "delay completion sale"
+retrieval_condition: "Applies when the auction purchaser paid the balance 75% of sale consideration more than 90 days after the auction date."
 
 # SOURCE
 source: "SC_FULL_TEXT"

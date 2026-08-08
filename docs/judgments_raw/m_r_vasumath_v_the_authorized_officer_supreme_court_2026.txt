@@ -1,0 +1,1114 @@
+ M.R. Vasumathi vs The Authorized Officer on 9 June, 2026 
+
+ Author:  Dipankar Datta  
+
+ Bench:  Dipankar Datta  
+
+ 2026 INSC 633                                                             NON-REPORTABLE
+
+                                    IN THE SUPREME COURT OF INDIA
+                                     CIVIL APPELLATE JURISDICTION
+
+                                     CIVIL APPEAL NO. 1606 OF 2026
+
+
+
+            M. R. VASUMATHI                                                 … APPELLANT
+
+
+                                                    VERSUS
+
+
+
+            THE AUTHORIZED OFFICER &amp; ORS.                                … RESPONDENTS
+
+
+
+                                                JUDGMENT
+ 
+
+
+             DIPANKAR DATTA, J.
+ 
+             THE APPEAL
+
+
+        1.             This appeal is directed against the judgment and order dated
+
+                     21.09.20201 passed by the High Court of Judicature at Madras2 in Writ
+
+                     Petition No. 29641 of 2019. Vide the impugned judgment, the High Court
+
+                     of Judicature at Madras dismissed the writ petitions filed by the appellant
+
+                     (daughter) as well as the son of the deceased guarantor3, thereby
+
+                     declining to interfere with the measures adopted by the first respondent
+
+                     being the authorised officer of the Indian Bank4 under the Securitisation
+    Signature Not Verified 
+
+    Digitally signed by 
+              impugned judgment
+              1 pant
+   rashmi dhyani
+   Date: 2026.06.10
+
+   Reason: 2  High Court
+   14:20:24 IST
+
+
+             3 
+              G. Ramanujam
+             4 
+              secured creditor
+
+
+                                                         1 
+     and Reconstruction of Financial Assets and Enforcement of Security
+
+     Interest Act, 20025, culminating in the auction sale of the secured asset.
+
+  2.   Appellant questions the legality of the said proceedings, particularly the
+
+     auction sale held on 11.03.2010, on the ground that the statutory
+
+     procedure governing such sale was not complied with.
+
+  3.   The first respondent is the authorised officer of the secured creditor. The
+
+     second respondent is the auction purchaser, being the successful bidder
+
+     in the auction sale of the secured asset. The remaining respondents are
+
+     the   other   legal   heirs/representatives   who   were   parties   to   the
+
+     proceedings before the High Court and have been arrayed as formal
+
+     parties in the present proceedings.
+ 
+ 
+ GENESIS
+
+
+  4.   Briefly, the facts triggering this appeal are these:
+
+        a.   One S. Murugesan6, sole proprietor of M/s Shiv Shankar Agencies,
+
+           had availed financial assistance from the secured creditor in the
+
+           year 1984. To secure the said loan, G. Ramanujam stood as
+
+           guarantor and mortgaged his immovable property in favour of the
+
+           secured creditor.
+ 
+       b.   On account of the default committed by the borrower, the secured
+
+           creditor instituted a suit7 before the City Civil Court, Chennai
+
+           against the borrower and the guarantor, seeking recovery of the
+
+
+  5 
+    SARFAESI Act 
+  6 
+   borrower
+  7 
+    O.S. No. 4067 of 1996 
+
+
+                                          2 
+            outstanding dues. On 10.09.1997, the said court passed a
+
+            preliminary decree in favour of the secured creditor for a sum of
+
+            Rs. 1,87,004.23 [in effect, the total sum was Rs. 1,92,400.23p
+
+            (inclusive of Court Fee of Rs. 5396/-)] along with interest @ of
+
+            18% per annum.
+ 
+        c.   G. Ramanujam expired on 26.09.2001 leaving behind his heirs
+
+            including the appellant. Several attempts were thereafter made by
+
+            and between the secured creditor and the heirs of G. Ramanujam
+
+            for an amicable settlement, but the same did not fructify.
+ 
+        d.   On 08.09.2009, nearly (12) twelve years after the passing of the
+
+            preliminary decree, the secured creditor issued a demand notice
+
+            under  Section 13(2)  of the SARFAESI Act to the borrower and the
+
+            heirs of G. Ramanujam. Subsequently, the secured creditor issued
+
+            a possession notice dated 21.12.2009 and later a sale notice dated
+
+            03.02.2010 proposing to sell the secured asset by way of public
+
+            auction under the Security Interest (Enforcement Rules), 20028.
+ 
+        e.   The secured asset was ultimately put to auction on 11.03.2010, in
+
+            which the respondent 2 herein emerged as the successful bidder9
+
+            with a bid amount of Rs. 2,11,00,500/-. Admittedly, 25% of the
+
+            bid    amount   was   paid       by   the   auction   purchaser   on
+
+            10.03.2010/11.03.2010, and the remaining 75% of the sale
+
+
+
+
+ 8 
+    SARFAESI Rules
+ 9 
+    auction purchaser
+
+
+                                          3 
+             consideration was paid on 31.03.2010. The sale certificate was
+
+             issued by the secured creditor on 10.04.2010.
+ 
+         f.   The heirs of G. Ramanujam challenged the aforesaid demand
+
+             notice before the Debts Recovery Tribunal, Chennai10 by applying
+
+             under  Section 17  of the SARFAESI Act (S.A. No. 28 of 2010). On
+
+             28.09.2010, the heirs of G. Ramanujam, including the appellant,
+
+             further filed S.A. No. (Sr.No.6473 of 2010) seeking to set aside
+
+             the auction sale, which was held on 11.03.2010 and confirmed in
+
+             favour of the auction purchaser. During the pendency of the
+
+             proceedings in S.A. (Sr. No. 6473 of 2010), the legal heirs,
+
+             including the appellant herein, filed M.A.6504 of 2010 seeking
+
+             permission to redeem the property; M.A.6505 of 2010 to condone
+
+             the delay in filing the application No. 6473 of 2010 and M.A. 6506
+
+             of 2010 seeking interim stay.
+ 
+        g.    On 30.12.2010, the DRT dismissed S.A. No. 28 of 2010, primarily
+
+             on the ground that since the sale schedule property was already
+
+             sold, the said application challenging the notice of intended sale
+
+             became infructuous. It also held that the secured creditor had
+
+             adhered to the procedure under the  SARFAESI Act . Followingly, on
+
+             the same day, the DRT dismissed SA (Sr. No. 6473/2010) along
+
+             with the MAs (Sr. Nos. 6504, 6505 &amp; 6506/2010) on the ground
+
+             that section 5 of the Limitation Act, 196311 would not be applicable
+
+
+ 10 
+     DRT
+ 11 
+      Limitation Act 
+
+
+                                          4 
+            to the application under  section 17  of the SARFAESI Act.
+
+        h.    Appeals, being M.A. (S.A. No. 107 of 2011) and R.A. (S.A. No. 91
+
+            of 2014), were carried before the Debts Recovery Appellate
+
+            Tribunal, Chennai12 challenging the dismissal of M.A. Sr. No. 6505
+
+            of 2010, filed in S.A. Sr. No. 6473 of 2010 by the appellant and
+
+            her brother.
+ 
+        i.   The DRAT first dismissed the appeal, i.e., R.A. (S.A. No. 91 of
+
+            2014) filed by the brothers of the appellant, by an order dated
+
+            16.12.2016,    affirming   the   reason   assigned   by   the   DRT.
+
+            Consequently, the DRAT also dismissed the appeal of the daughter
+
+            of G. Ramanujam and other heirs, being M.A. (S.A. No. 107 of
+
+            2011).
+ 
+        j.   Aggrieved thereby, the appellant approached the High Court in
+
+            W.P. No. 29641 of 2019, and her brother (son of G. Ramanujam)
+
+            filed the connected W.P. No. 27770 of 2019. The High Court vide
+
+            the impugned judgment dismissed both the writ petitions holding
+
+            that the secured creditor had validly exercised its powers under
+
+            the  SARFAESI Act  and that no interference was warranted.
+
+      k.    Still aggrieved, the present civil appeal has been preferred by the
+
+            daughter of G. Ramanujam.
+ 
+ 
+SUMMARY OF THE IMPUGNED JUDGMENT
+
+
+   5.     The High Court, by the common impugned judgment, dismissed W.P.
+
+
+ 12 
+     DRAT
+
+
+                                          5 
+     No. 29641 of 2019 and W.P. No. 27770 of 2019. At the outset, the
+
+     High Court noted that the foundational facts were largely not in
+
+     question. The loan transaction dated back to 1984; a preliminary
+
+     decree had been passed in 1997 on the basis of a mortgage created
+
+     by G. Ramanujam; and the subsequent attempts at settlement
+
+     having become nugatory, recourse was eventually taken by the
+
+     secured creditor under the  SARFAESI Act , culminating in the sale of
+
+     the secured asset in 2010. The challenge mounted by the heirs of G.
+
+     Ramanujam before the High Court was essentially directed against
+
+     the recovery proceedings and the consequent auction.
+
+  6.   The High Court found the challenge to be entirely untenable in light
+
+     of the conduct of the appellant and her brother, being the writ
+
+     petitioners. It was observed that the writ petitioners had remained
+
+     indolent for an inordinate length of time, notably on the aspect of
+
+     failing to take steps to set aside the ex parte decree for approximately
+
+     over 4500 (forty five hundred) days. Such a prolonged inaction, in
+
+     the Court’s view, disentitled them from challenging the subsequent
+
+     recovery proceedings. The writ petitioners’ attempt to assail the
+
+     actions of the secured creditor, having remained in a state of inertia,
+
+     was characterised by the High Court as lacking in bona fides.
+
+  7.   On the anvil of limitation, the High Court rejected the contention that
+
+     the proceedings under the  SARFAESI Act  were barred merely because
+
+     they were initiated several years after the decree. It went on to hold
+
+
+
+
+                                      6 
+     that the secured creditor continuously pursued recovery, subsuming
+
+     attempts at one-time settlement, and that the statutory framework
+
+     introduced concomitantly permitted recourse to the  SARFAESI Act  as
+
+     an efficacious remedy. The delay, therefore, was held not to be fatal
+
+     so as to invalidate the proceedings.
+ 
+ 8.   Furthermore, the High Court held that the writ petitioners had
+
+     fundamentally misconstrued the nature and object of the  SARFAESI
+
+     Act . It was observed that the legislation was enacted to provide an
+
+     expeditious mechanism for recovery of secured debts, independent
+
+     of the conventional civil court process. The mere existence of a prior
+
+     decree or the availability of remedies under other enactments was
+
+     held not to preclude the secured creditor from invoking the provisions
+
+     of the  SARFAESI Act .
+ 
+ 9.   Apropos the alleged procedural infirmities in the auction process, the
+
+     High Court underscored that both the DRT and the DRAT had returned
+
+     concurrent findings affirming due compliance with the statutory
+
+     requirements and that no material irregularity or illegality was
+
+     evinced, which demanded interference in the exercise of writ
+
+     jurisdiction. On the contrary, the High Court noted that the auction
+
+     purchaser had acquired rights consequent upon the completed sale
+
+     and had been subjected to protracted litigation.
+
+
+
+
+                                     7 
+  10.   The sequitur was the dismissal of the writ petitions by the High Court,
+
+      on the premise that the natural circulation of public money cannot be
+
+      thwarted by frivolous personal litigation.
+ 
+ 
+  SUBMISSIONS ON BEHALF OF VASUMATHI (APPELLANT)
+
+
+  11.   Learned senior counsel, Mr. Ratnakar Dash, appearing on behalf of
+
+      the appellant contended before us that after 25 (twenty five) years
+
+      of the preliminary decree, the secured creditor issued notice under
+
+       Section 13(2)  of the SARFAESI Act to the heirs of G. Ramanujam,
+
+      who passed away after the preliminary decree was passed by the Civil
+
+      Court, claiming Rs. 95,42,372.52p. The same was contended to be
+
+      unjustifiable. Besides this, it was also urged that the secured creditor
+
+      took the decision to sell the secured asset in haste sans adherence to
+
+      the provisions of law.
+ 
+ 12.   It was submitted by Mr. Dash that the secured creditor instead of
+
+      obtaining a valuation report from its officers, played fraud by
+
+      obtaining valuation report through the original borrower, namely S.
+
+      Murugesan, which was argued not to be in terms of Rule 8(5) of the
+
+      SARFAESI Rules mandating that the report has to be obtained by the
+
+      authorised officer of the secured creditor.
+ 
+ 13.   Mr. Dash contended that Rule 9(3) of the SARFAESI Rules provides
+
+      for the mandate of depositing the 25% of the sale price immediately
+
+      on the date of sale and that in default, the property will be resold. It
+
+      was asserted that the auction purchaser had failed to pay the 25%
+
+
+
+                                       8 
+      deposit &quot;immediately&quot; in the prescribed mode (DD/BPO) on the date
+
+      of sale, i.e., 11.03.2010. Furthermore, the balance 75% was allegedly
+
+      paid beyond the mandatory 15-day period on 31.03.2010 without a
+
+      written agreement for extension, rendering the sale a complete
+
+      nullity. It was argued that the secured creditor had waived the delay
+
+      in the payment, and that the waiver could not have been a unilateral
+
+      act.
+ 
+ 14.   Mr. Dash further urged the Court to believe that even if the market
+
+      price of the property in question was Rs. 2.11 crore, for the
+
+      satisfaction of the debt of Rs. 95 lakh+ as claimed, only a portion of
+
+      the property ought to have been sold and not the entire property.
+
+  15.   Mr. Dash next assailed the reliance placed by the secured creditor on
+
+      the amended definition of “debt” under  Section 2(ha)  of the
+
+      SARFAESI Act, as introduced by Act 44 of 2016. According to him,
+
+      the proceedings in question must be governed by the unamended
+
+      definition, as it stood at the time of institution of the original
+
+      proceedings.
+ 
+ 16.   In sum and substance, it was urged by Mr. Dash that the proceedings
+
+      initiated under the  SARFAESI Act  were illegal and without jurisdiction
+
+      since the claim of the secured creditor once stood adjudicated by the
+
+      competent civil court vide the passing of the preliminary decree and,
+
+      therefore, the secured creditor ought to have proceeded for execution
+
+      of the decree. He referred to  Section 36  of the SARFAESI Act, which
+
+
+
+
+                                      9 
+        mandates the measures to be taken under  section 13(4)  thereof to
+
+        be within the limitation period stipulated under the  Limitation Act  and
+
+        prayed that the appeal be allowed.
+ 
+ 
+      SUBMISSIONS ON BEHALF OF THE SECURED CREDITOR (RESPONDENT 1)
+
+
+  17.     Mr. Brijesh Kumar Tamber, learned counsel, appearing on behalf of
+
+        the secured creditor, maintained that the definition of “debt” under
+
+        the  SARFAESI Act and the Recovery of Debts Due to Banks and
+
+        Financial Institutions Act, 1993 , expressly includes liabilities payable
+
+        under a decree and accrued interest and that the proceedings under
+
+        the  SARFAESI Act  were initiated only after the guarantor’s legal heirs
+
+        defaulted on settlement attempts between 2001 and 2003.
+
+  18.     It   was   further   contended    that   the    auction   was    conducted
+
+        transparently,   with   the   respondent       no.2   (auction   purchaser)
+
+        emerging as the highest bidder at Rs. 2.11 crore, well above the
+
+        reserve price of Rs. 1.58 crore. Mr. Tamber urged that the bid amount
+
+        was deposited within the stipulated timelines and that any minor
+
+        delay in payment was within the secured creditor’s power to waive or
+
+        extend under the SARFAESI Rules.
+ 
+ 19.     Much emphasis was laid by Mr. Tamber on concurrent upholding of
+
+        the validity of the sale by the DRT, the DRAT and the High Court,
+
+        finding no irregularity in the interest calculation or the auction
+
+        procedure. Dismissal of the appeal was, accordingly, prayed.
+
+
+
+
+                                          10 
+  SUBMISSIONS OF THE AUCTION PURCHASER (RESPONDENT 2)
+
+
+  20.   Mr. Soumya Chakraborty, learned senior counsel for the auction
+
+      purchaser sought protection of his rights as a bona fide purchaser,
+
+      who has been kept out of the property’s full enjoyment for over a
+
+      decade. It was argued that the appellant is attempting to re-agitate
+
+      settled factual issues, which is impermissible.
+
+  21.   According to Mr. Chakraborty, the payment of Rs. 2.11 crore was
+
+      made in 2010 (25% on 10.03.2010/11.03.2010 and the balance on
+
+      31.03.2010). He asserted that the sale was confirmed by the Bank
+
+      and the certificate issued in April 2010, making the transaction final.
+
+      It was also urged that cancelling an auction sale conducted 16
+
+      (sixteen) years ago would be catastrophic, as the auction purchaser
+
+      has suffered immensely in the meantime – deprived of the
+
+      opportunity to develop the property, costs, and inflation as a result
+
+      of the prolonged litigation, initiated by the appellant. He, thus, prayed
+
+      for dismissal of the appeal.
+ 
+ 
+  ISSUES INVOLVED
+
+
+  22.   Two broad issues arise for consideration:
+ 
+        a.   Whether the proceedings under the  SARFAESI Act  initiated in
+
+            the year 2009, nearly 12 (twelve) years after the passing of the
+
+            preliminary decree, stand vitiated on the ground of limitation?
+ 
+
+
+
+                                       11 
+           b.    Whether the sale of the secured asset pursuant to the
+
+                impugned proceedings stands vitiated on account of alleged
+
+                non-compliance with statutory requirements and procedural
+
+                irregularities?
+ 
+
+       ANALYSIS
+
+
+  23.      The rival submissions of the parties and perusal of the material on
+
+         record bring to the fore the controversy at hand, which may be
+
+         profitably narrowed down to the legality of the auction sale conducted
+
+         under the framework of the  SARFAESI Act  and the SARFAESI Rules.
+
+  24.      As a prefatory note, it is observed that the validity of an auction
+
+         conducted under the statutory regime is not to be tested on equitable
+
+         considerations but strictly on the ground whether the mandate of the
+
+         statute and the rules has been breached or not. The SARFAESI Rules
+
+         being subordinate legislation, bind the secured creditor as well as the
+
+         auction purchaser with equal rigour.
+ 
+ I.        COMPLIANCE WITH RULE 9: A STATUTORY SINE QUA NON
+
+  25.      Rule 9 of the SARFAESI Rules squarely governs the confirmation of
+
+         sale and the manner of payment of the sale consideration. Sub-Rules
+
+         3, 4 and 5 of the unamended SARFAESI Rules13 may profitably be
+
+         noticed thus:
+ 
+                 (3) On every sale of immovable property, the purchaser shall
+                immediately pay a deposit of twenty-five % of the amount of the sale
+
+
+
+ 13 
+     unamended SARFAESI Rules, as it stood at the time of the impugned sale
+
+
+                                             12 
+               price, to the authorised officer conducting the sale and in default of
+               such deposit, the property shall forthwith be sold again.
+               (4) The balance amount of purchase price payable shall be paid by
+               the purchaser to the authorised officer on or before the fifteenth day
+               of confirmation of sale of the immovable property or such extended
+               period as may be agreed upon in writing between the parties.
+               (5) In default of payment within the period mentioned in sub-rule
+               (4), the deposit shall be forfeited and the property shall be resold
+               and the defaulting purchaser shall forfeit all claim to the property or
+               to any part of the sum for which it may be subsequently sold.
+                                                                        (emphasis ours)
+
+  26.     As a sequitur to the aforementioned legal provisions, the auction
+
+        purchaser is mandated to immediately deposit 25% of the sale price
+
+        (inclusive of earnest money) on the date of sale; and in default of such
+
+        deposit, the property shall forthwith be resold. Further, the balance of
+
+        purchase price is required to be paid within the fifteenth day of
+
+        confirmation of sale or within such written agreed extended time,
+
+        failing which the deposit shall stand forfeited. Also, in such a case, the
+
+        purchaser would forfeit all his claims either to the property or to any
+
+        part of the sum for which such property may subsequently be sold.
+
+   27.     The aforesaid legal position finds lucid expression in  Sri Siddeshwara
+
+        Cooperative Bank Ltd. v. Ikbal14 , as follows: 
+ 
+                ***
+               13.3. Sub-rule (3) lays down that on every sale of immovable
+               property, the purchaser shall immediately make the deposit of 25%
+               of the amount of the sale price. In default of such deposit, the
+               property shall forthwith be sold again.
+                 13.4. Sub-rule (4) provides that the balance amount of purchase
+               price payable shall be paid by the purchaser on or before the fifteenth
+               day of confirmation of sale of the immovable property or such
+               extended period as may be agreed upon in writing between the
+               parties.
+ 
+
+  14 
+       (2013) 10 SCC 83
+
+
+                                           13 
+13.5. Sub-rule (5) makes a provision that if the balance amount of
+purchase price is not paid as required under sub-rule (4), then the
+deposit shall be forfeited and the property shall be resold and the
+defaulting purchaser shall forfeit all claim to the property or to any
+part of the sum for which it may be subsequently sold.
+13.6. According to sub-rule (6), on confirmation of sale by the
+secured creditor and if the terms of payment have been complied
+with, the authorised officer exercising power of sale shall issue a
+certificate of sale of the immovable property in favour of the
+purchaser in the form given in Appendix V to the 2002 Rules.
+  14. A reading of sub-rule (1) of Rule 9 makes it manifest that the
+provision is mandatory. The plain language of Rule 9(1) suggests this.
+Similarly, Rule 9(3) which provides that the purchaser shall pay a
+deposit of 25% of the amount of the sale price on the sale of
+immovable property also indicates that the said provision is
+mandatory in nature. As regards balance amount of purchase price,
+sub-rule (4) provides that the said amount shall be paid by the
+purchaser on or before the fifteenth day of confirmation of sale of
+immovable property or such extended period as may be agreed upon
+in writing between the parties. The period of fifteen days in Rule 9(4)
+is not that sacrosanct and it is extendable if there is a written
+agreement between the parties for such extension. What is the
+meaning of the expression “written agreement between the parties”
+in Rule 9(4)? The 2002 Rules do not prescribe any particular form for
+such agreement except that it must be in writing. The use of the term
+“written agreement” means a mutual understanding or an
+arrangement about relative rights and duties by the parties. For the
+purposes of Rule 9(4), the expression “written agreement” means
+nothing more than a manifestation of mutual assent in writing. The
+word “parties” for the purposes of Rule 9(4) we think must mean the
+secured creditor, borrower and auction-purchaser.
+***
+  19. There is no doubt that Rule 9(1) is mandatory but this provision
+is definitely for the benefit of the borrower. Similarly, Rule 9(3) and
+Rule 9(4) are for the benefit of the secured creditor (or in any case
+for the benefit of the borrower). It is settled position in law that even
+if a provision is mandatory, it can always be waived by a party (or
+parties) for whose benefit such provision has been made. The
+provision in Rule 9(1) being for the benefit of the borrower and the
+provisions contained in Rule 9(3) and Rule 9(4) being for the benefit
+of the secured creditor (or for that matter for the benefit of the
+borrower), the secured creditor and the borrower can lawfully waive
+their right. These provisions neither expressly nor contextually
+indicate otherwise. Obviously, the question whether there is waiver
+or not depends on the facts of each case and no hard-and-fast rule
+can be  laid down in  this regard.
+                                                          (emphasis ours)
+
+
+                             14 
+  28.   Even upon a cursory perusal of Rule 9 of the SARFAESI Rules that
+
+      existed at the time of the impugned sale, it is clear that these
+
+      provisions are neither ornamental nor directory; they are couched in
+
+      mandatory terms and go to the root of the validity of the sale. A
+
+      conjoint reading of the relevant sub-rules of Rule 9 underscore the
+
+      mandatory character of these provisions, particularly accentuating the
+
+      requirement of balance deposit under sub-rule (4), which is integral to
+
+      the sanctity and credibility of the auction mechanism. Any deviation
+
+      therefrom, absent legally sustainable justification, would render the
+
+      process vitiated.
+ 
+ 29.   The factual position, as is borne out from the extant record, is not in
+
+      serious dispute – i) auction sale was conducted on 11.03.2010; ii)
+
+      auction purchaser was declared successful on the said date; iii) 25%
+
+      of the bid amount was deposited on 10.03.2010/11.03.2010 vide a
+
+      demand draft of Rs. 9,00,000/-, prepared on 10.03.2010; and iv) two
+
+      further demand drafts of Rs. 6,80,000/- and Rs. 36,95,125/- were
+
+      furnished on 11.03.2010.
+ 
+ 30.   However, the balance 75% of the bid amount was admittedly paid only
+
+      on 31.03.2010. The lingering lis is as to whether this subsequent
+
+      deposit satisfies Rule 9(4). The outer time limit of fifteen days expired
+
+      on 26.03.2010, as reflected in the communication issued by the
+
+      secured creditor dated 11.03.2010, which may be reproduced here for
+
+      the convenience of reference:
+ 
+ 
+
+                                        15 
+                                                   ***
+                  4. Please note that you have to pay the balance sale price within 15
+                days of Confirmation of Sale ie., today. In case of your failure to pay
+                as said above, the entire bid amount paid by you shall be forfeited
+                by the Authorised Officer without any notice and the sale will be
+                cancelled.
+ 
+ 31.     The payment of the remaining 75%, on 31.03.2010 is, therefore, ex
+
+        facie beyond the statutory period. In view of the above, the contention
+
+        of the auction purchaser that the sale stood confirmed only on
+
+        11.03.2010 is untenable.
+ 
+  32.     The following passage from  IDBI Bank Ltd. v. Ramswaroop
+
+        Daliya15  lends credence to the proposition: 
+ 
+ 
+                  13. Notwithstanding the above, the provisions of sub-Rules (4) and
+                (5) of Rule 9 of the Rules, if read together in conjunction, would
+                reveal that it is only for the default in payment of the balance auction
+                amount within the period mentioned that the property could be resold
+                and that the period of 15 days stipulated therein for the deposit of
+                the balance sale amount may be extended, as may be agreed upon
+                in writing. It means that first there has to be a default on part of the
+                auction purchaser to invite cancellation of the auction and second,
+                that the period of deposit stipulated therein is not absolute rather
+                extendable with the agreement of the parties.
+ 
+                                                                       (emphasis ours)
+
+  33.     Furthermore, the contention advanced on behalf of the secured
+
+        creditor by its learned counsel that any deviation in the timeline of
+
+        payment stood regularised by a valid exercise of power of extension
+
+        or waiver is equally unbacked by any demonstrable material. Nothing
+
+        is borne out of the record to demonstrate that there was any prayer
+
+        for extension of time made by the auction purchaser at any time prior
+
+
+  15 
+      2024 SCC OnLine SC 2878
+
+
+                                             16 
+        to 31.03.2010 or that any written agreement extending the time was
+
+        entered into by and between the secured creditor and the auction
+
+        purchaser.
+ 
+ 34.     The aforesaid legal position leads us to the examination of the
+
+        consequence of non-compliance with the statutorily ordained timeline,
+
+        in the absence of any record of written agreement between the secured
+
+        creditor and the auction purchaser in the present factual matrix.
+
+    II.    CONSEQUENCE OF NON-COMPLIANCE
+
+  35.     The DRT, the DRAT and the High Court appear to have proceeded on a
+
+        broader premise of consideration of delay, conduct of the borrower,
+
+        and the perceived equities in favour of the auction purchaser. Equally,
+
+        it is true that the record bears out that no concrete steps were
+
+        ultimately taken by the appellant, who is the daughter of the deceased
+
+        guarantor, to liquidate the outstanding dues and that earlier attempts
+
+        at settlement did not come to fruition. However, in our considered
+
+        opinion, the failure to repay without being informed of an extension
+
+        being granted to the auction purchaser, by itself, cannot validate
+
+        proceedings that are otherwise vitiated in law.
+
+  36.     While it is trite that the rights of an auction purchaser and the sanctity
+
+        of a confirmed sale ordinarily merit due protection, such protection is
+
+        by no means absolute. It must yield where the very process
+
+        engendering the sale is demonstrated to be legally infirm or to be
+
+        incongruous with the statutory framework. The object of proceedings
+
+
+
+
+                                          17 
+      under the  SARFAESI Act  is not the mere culmination of a sale in a
+
+      mechanical manner, but the lawful realisation of the secured asset
+
+      through a process that is fair, transparent and strictly compliant with
+
+      the prescribed rules. In the present case, the non-adherence to the
+
+      timeline that the SARFAESI Rules contemplate constitutes a material
+
+      irregularity going to the root of the matter. The mere factum that the
+
+      sale stood confirmed cannot, therefore, foreclose judicial scrutiny.
+
+  37.   It is true that there is no express or formal articulation, in so many
+
+      words, by the appellant evincing her readiness and willingness to
+
+      tender the stipulated amount for redemption of the secured asset.
+
+      However, the matter cannot be posited in such a narrow compass. The
+
+      record unmistakably discloses that the appellant, along with the other
+
+      legal heirs, had instituted multiple miscellaneous applications before
+
+      the DRT, inter alia, seeking permission to redeem the property upon
+
+      the deposit of the required amount and to set aside the consequences
+
+      of the sale. Such steps, taken in the teeth of adverse proceedings,
+
+      cannot be disregarded as inconsequential or merely procedural. On the
+
+      contrary, they evince a clear manifestation of intent, although implicit,
+
+      that the appellant was desirous of redeeming the property upon being
+
+      accorded with an opportunity to do so. Viewed in this prism, the filing
+
+      of the said application must be construed as sufficient indication of the
+
+      appellant’s willingness to redeem.
+ 
+ 
+
+
+                                        18 
+  38.    Even otherwise, as a logical sequitur, the contention that the guarantor
+
+       or his legal heirs did not evince adequate interest in repayment does
+
+       not advance the case of the secured creditor, for a process vitiated by
+
+       statutory non-compliance cannot otherwise be sanctified on such
+
+       considerations.
+ 
+ 39.    The property in question belonged to G. Ramanujam, the deceased
+
+       guarantor, and upon his demise, vested in his legal heirs. Such heirs
+
+       cannot be divested of their lawful interest except in accordance with a
+
+       procedure that is fair, just and in strict conformity with the governing
+
+       statute, i.e., the  SARFAESI Act  and the SARFAESI Rules.
+
+
+  CONCLUSION
+
+
+   40.    In view of the foregoing discussion, the appeal deserves to be allowed
+
+        in part and is, accordingly, allowed to the extent mentioned hereafter.
+
+        The impugned judgment and order passed by the High Court is set
+
+        aside, as are the orders passed by the DRAT and the DRT.
+
+   41.    Consequently, the auction sale conducted in respect of the secured
+
+        asset stands quashed and set aside.
+ 
+  42.    However, having regard to the fact that the auction purchaser had
+
+        participated in the process and deposited the bid amount pursuant
+
+        thereto, interests of equity demand suitable restitution of interests of
+
+        such purchaser. Although the sale is being set aside for reasons not
+
+        attributable to him, he has remained deprived of the use of the
+
+        monies deposited by him for a significant length of time. Accordingly,
+
+
+
+                                        19 
+      the auction purchaser shall be entitled to refund of the entire amount
+
+      deposited by him together with interest thereon @ 7% per annum
+
+      from the respective dates of deposit until payment. Such refund shall
+
+      be effected by the secured creditor within a period of 6 (six) weeks
+
+      from date.
+ 
+ 43.   At the same time, the appellant being the legal heir of G. Ramanujam
+
+      would now be entitled to an opportunity to redeem the mortgage and
+
+      seek restoration of the secured asset in her favour till such time a
+
+      notice for a fresh auction is issued on her failure to redeem. We grant
+
+      her such opportunity. Appellant shall be at liberty to approach the
+
+      secured creditor within two weeks from date with a copy of this
+
+      judgment to ascertain the amount due and payable. Upon payment
+
+      being made within the time to be stipulated by the secured creditor
+
+      (which will not be less than a month from the date intimation is given
+
+      to the appellant), legal consequences will follow.
+
+  44.   In moulding the relief, we have borne in mind the peculiar fact
+
+      situation of the case. The demand notice issued under  Section 13(2) 
+
+      of   the   SARFAESI   Act   quantified   the   outstanding   dues   at
+
+      Rs.95,42,372.52p. At the same time, the appellant cannot be
+
+      permitted to secure restoration of the mortgaged property without
+
+      satisfying the liability which constituted the fulcrum of the measures
+
+      initiated by the secured creditor. Balancing the competing equities
+
+      and in order to do complete justice between the parties, we deem it
+
+
+
+
+                                      20 
+      appropriate to direct that the appellant shall be entitled to redeem
+
+      the mortgage and obtain restoration of the secured asset upon
+
+      payment to the secured creditor of a sum of Rs.95,42,372.52p
+
+      together with 5% interest per annum thereon from the date the
+
+      notice under  Section 13(2)  of the SARFAESI Act was issued until the
+
+      date of such payment by the appellant. Upon payment being made
+
+      within the period stipulated by the secured creditor in terms of
+
+      paragraph 44 above, the secured asset shall stand restored to the
+
+      appellant free from all encumbrances arising out of the subject loan
+
+      transaction.
+ 
+ 45.   The secured asset may, however, be put up for auction once again 8
+
+      (eight) weeks hence should the appellant fail to pay the amount
+
+      determined by the secured creditor in terms of this order; and during
+
+      this period, the secured creditor will obtain a fresh valuation report
+
+      from a government-empanelled valuer.
+ 
+ 46.   The directions contained in paragraphs 43 to 46 hereinabove are
+
+      issued in exercise of the jurisdiction of this Court under  Article 142  of
+
+      the Constitution and shall constitute a one-time measure intended to
+
+      balance the equities of the parties in the peculiar facts of the present
+
+      case. It is clarified that in the event of failure on the part of the
+
+      appellant to avail this one-time opportunity, she will forfeit all her
+
+      rights to the secured asset.
+ 
+ 
+
+
+                                       21 
+  47.   In light of the conclusion arrived at by us on the second issue qua the
+
+      validity of the auction sale and the consequential reliefs flowing
+
+      therefrom, it is considered superfluous to render a conclusive
+
+      determination on the first issue relating to limitation. The same is,
+
+      accordingly, left open.
+ 
+ 48.   The appeal stands disposed of on the above terms. Connected
+
+      applications, if any, stand disposed of.
+ 
+ 49.   Parties shall bear their own costs.
+ 
+ 50.   Registry is directed to send this judgment and order to the email
+
+      address of the learned advocate-on-record for the appellant
+
+      immediately.
+ 
+ 
+
+
+                                            …………………......…………………J.
+                                                (DIPANKAR DATTA)
+
+
+
+
+                                          ……………………….…………………J.
+                                           (AUGUSTINE GEORGE MASIH)
+      NEW DELHI;
+        JUNE 9, 2026.
+ 
+ 
+
+
+                                      22 
+ 

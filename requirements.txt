@@ -27,6 +27,12 @@ pypdf==6.14.2                     # splits statute PDFs into <=30-page chunks (D
 # Claude API
 anthropic==0.56.0
 
+# Gemini free-tier — only used when LLM_PROVIDER=gemini (pipeline smoke test)
+google-genai==1.2.0
+
+# OpenRouter (OpenAI-compatible) — stopgap while Bedrock is down
+openai==1.30.1
+
 # Translation — IndicTrans2 via HuggingFace
 transformers==4.41.0
 sentencepiece==0.2.0
@@ -50,6 +56,7 @@ botocore==1.34.0
 
 # Report generation
 weasyprint==62.3
+pydyf==0.11.0  # pydyf>=0.12 dropped Stream.transform(), breaking weasyprint 62.3's PDF matrix code
 jinja2==3.1.4
 markupsafe==2.1.5
 

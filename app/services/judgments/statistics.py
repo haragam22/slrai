@@ -1,8 +1,8 @@
 """Judgment corpus win-rate statistics — Qdrant payload filtering, no vector search.
 
 Returns BOTH counts:
-  verified — favor_verified=True only (the manually-verified Class A judgments)
-  full     — across all judgments (Class A + Class B)
+  verified — favor_verified=True only (outcome manually confirmed)
+  full     — across the whole judgment corpus
 Verified is the primary signal; both are shown in the report.
 """
 from __future__ import annotations

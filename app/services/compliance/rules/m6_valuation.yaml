@@ -12,6 +12,7 @@ rules:
         expression: "valuer_rbi_empanelled == False or valuer_registered_under_rvact == False"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Valuer '{valuer_name}' does not appear to be RBI-empanelled or registered under RVA 2017. Valuation legally defective."
         judgment_tags: [valuation_defect, rule_8_6]
 
@@ -23,6 +24,7 @@ rules:
         expression: "valuation_age_at_auction_days > 180"
         result_if_true: FAIL
         severity: CURABLE
+        outcome_favors: BORROWER
         message_template: "Valuation report ({valuation_date}) is {valuation_age_at_auction_days} days old at auction. Exceeds 180-day guideline."
         judgment_tags: [valuation_defect, stale_valuation]
 
@@ -34,6 +36,7 @@ rules:
         expression: "reserve_price_vs_valuation_pct < 75"
         result_if_true: FAIL
         severity: CURABLE
+        outcome_favors: BORROWER
         message_template: "Reserve price is {reserve_price_vs_valuation_pct}% of valuation. Significantly below valuation. Borrower may allege undervaluation."
         judgment_tags: [valuation_dispute, undervaluation]
 
@@ -53,6 +56,7 @@ rules:
         expression: "sale_notice_date <= valuation_date"
         result_if_true: FAIL
         severity: FATAL
+        outcome_favors: BORROWER
         message_template: "Sale notice dated {sale_notice_date} issued on or before valuation report dated {valuation_date}. Reserve price cannot be derived from a valuation that did not yet exist. Sequence of steps under Rule 8(5) violated."
         judgment_tags: [valuation_defect, rule_8_5, valuation_sequence]
     pass_message_template: "Valuation report ({valuation_date}) correctly obtained before sale notice ({sale_notice_date})."

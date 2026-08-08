@@ -70,6 +70,12 @@ celery_app.conf.update(
     task_acks_late=True,            # re-queue on worker crash
     worker_prefetch_multiplier=1,   # one task at a time per worker (heavy OCR/NLP)
     broker_connection_retry_on_startup=True,
+    # Redis default visibility_timeout is 3600s — nlp_extract_facts on a large
+    # doc (many batches, each with up to 3 qwen retries on malformed JSON) can
+    # run past that, so Redis assumes the worker died and redelivers the same
+    # task to run again in parallel, corrupting/duplicating progress on the
+    # original run. Bump well past any realistic single-task duration.
+    broker_transport_options={"visibility_timeout": 21600},  # 6h
     task_routes={
         "tasks.chain_a.*": {"queue": "pipeline"},
         "tasks.chain_b.*": {"queue": "pipeline"},

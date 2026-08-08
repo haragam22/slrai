@@ -35,18 +35,50 @@ def compute_judicial_score(
         return base_score
 
 
+# A rule author's PASS/FAIL/REVIEW status label isn't a reliable signal of
+# how strong a finding is — this is. Applied to any check that actually
+# fired (severity is not None); the generic "nothing wrong found" fallthrough
+# is excluded entirely, it isn't evidence either way.
+SEVERITY_STRENGTH = {
+    "ABSOLUTE_BAR":    1.0,
+    "FATAL":           1.0,
+    "HIGH":            0.85,
+    "REVIEW_REQUIRED": 0.6,
+    "CURABLE":         0.6,
+    "MINOR":           0.3,
+    "ADVISORY":        0.2,
+    "UNKNOWN":         0.4,
+}
+
+# Bank-favorable findings partially rebut borrower-favorable ones on the same
+# ground (e.g. M10_C2's fraud finding vs M10_C3's bona-fide-payment finding)
+# but don't automatically zero them out — a DRT still weighs both.
+BANK_EVIDENCE_OFFSET_WEIGHT = 0.5
+
+
+def compute_factual_score(ground_results: list) -> float:
+    """ground_results: ComplianceResult rows mapped to this ground_code."""
+    borrower_signal = 0.0
+    bank_signal = 0.0
+    for r in ground_results:
+        if r.severity is None:
+            continue  # generic "nothing wrong" fallthrough — not evidence
+        strength = SEVERITY_STRENGTH.get(r.severity, 0.5)
+        if r.outcome_favors == "BORROWER":
+            borrower_signal = max(borrower_signal, strength)
+        elif r.outcome_favors == "BANK":
+            bank_signal = max(bank_signal, strength)
+        # NEUTRAL findings (e.g. contested standing) carry no directional signal.
+    return round(max(0.0, min(1.0, borrower_signal - BANK_EVIDENCE_OFFSET_WEIGHT * bank_signal)), 4)
+
+
 def compute_ground_strength(
     ground_code: str,
-    compliance_result_status: str,  # 'PASS' | 'FAIL' | 'UNKNOWN'
+    ground_results: list,
     applicable_judgments: list[dict],
     corpus_stats: dict,
 ) -> dict:
-    if compliance_result_status == "FAIL":
-        factual_score = 1.0   # bank's record confirms borrower's allegation
-    elif compliance_result_status == "UNKNOWN":
-        factual_score = 0.4   # conservative: unverified = some risk
-    else:
-        factual_score = 0.0   # bank's record contradicts allegation
+    factual_score = compute_factual_score(ground_results)
 
     judicial_score = compute_judicial_score(ground_code, applicable_judgments, corpus_stats)
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SLRAI Risk Report — {{ case.borrower_name }}</title>
+<title>SLRAI Risk Report - {{ case.borrower_name }}</title>
 <style>
 /* ─── FONTS ───────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -17,7 +17,7 @@
   size: A4;
   margin: 18mm 14mm 22mm 14mm;
   @bottom-center {
-    content: "CONFIDENTIAL — INTERNAL USE ONLY — Page " counter(page) " of " counter(pages);
+    content: "CONFIDENTIAL - INTERNAL USE ONLY - Page " counter(page) " of " counter(pages);
     font-family: 'Inter', sans-serif;
     font-size: 7pt;
     color: #9ca3af;
@@ -314,7 +314,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 <div class="watermark">CONFIDENTIAL</div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     PAGE 1 — COVER, RECOMMENDATION, SCORES, SUMMARY
+     PAGE 1 - COVER, RECOMMENDATION, SCORES, SUMMARY
 ═══════════════════════════════════════════════════════════════════ -->
 
 <!-- HEADER -->
@@ -325,9 +325,9 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
   </div>
   <div class="meta">
     <div><strong>Report Date:</strong> {{ report_date }}</div>
-    <div><strong>Case Ref:</strong> {{ case.case_ref or '—' }}</div>
-    <div><strong>DRT Case:</strong> {{ case.drt_case_number or '—' }}</div>
-    <div><strong>DRT Bench:</strong> {{ case.drt_bench or '—' }}</div>
+    <div><strong>Case Ref:</strong> {{ case.case_ref or '-' }}</div>
+    <div><strong>DRT Case:</strong> {{ case.drt_case_number or '-' }}</div>
+    <div><strong>DRT Bench:</strong> {{ case.drt_bench or '-' }}</div>
   </div>
 </div>
 
@@ -335,7 +335,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:8pt;">
   <strong style="font-size:10pt;color:#111827;">{{ case.borrower_name }}</strong>
   <div style="color:#6b7280;margin-top:3px;">
-    Account: {{ case.loan_account_number or '—' }} &nbsp;|&nbsp;
+    Account: {{ case.loan_account_number or '-' }} &nbsp;|&nbsp;
     Principal: {{ case.principal_amount | currency }} &nbsp;|&nbsp;
     Property: {{ case.property_description or 'Not specified' }}
   </div>
@@ -356,7 +356,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
   <div class="rec-title">{{ recommendation_display }}</div>
   {% if drt_stay_active %}
   <div style="font-size:8pt;color:#7f1d1d;margin-top:4px;font-weight:600;">
-    ⚠ DRT interim stay is active — enforcement is stayed. Recommendation overridden to DO_NOT_PROCEED_CRITICAL.
+    [!] DRT interim stay is active - enforcement is stayed. Recommendation overridden to DO_NOT_PROCEED_CRITICAL.
   </div>
   {% endif %}
 </div>
@@ -419,12 +419,12 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 {% for alert in coverage_alerts %}
   {% if alert.severity == 'NO_PRECEDENT' %}
   <div class="alert-box">
-    <div class="alert-header">NO PRECEDENT — {{ alert.ground_code }}</div>
+    <div class="alert-header">NO PRECEDENT - {{ alert.ground_code }}</div>
     <div class="alert-body">{{ alert.message }}</div>
   </div>
   {% else %}
   <div class="warn-box">
-    <div class="warn-header">UNVERIFIED SIMILARITY — {{ alert.ground_code }}</div>
+    <div class="warn-header">UNVERIFIED SIMILARITY - {{ alert.ground_code }}</div>
     <div class="warn-body">{{ alert.message }}</div>
   </div>
   {% endif %}
@@ -434,7 +434,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 {% if sa_applicant_type != "BORROWER" and sa_applicant_type != "GUARANTOR" %}
 <!-- Third Party Applicant Notice (v5.4) -->
 <div class="third-party-notice">
-  <div class="notice-header">⚠ Third Party SA — {{ sa_applicant_type | replace("_", " ") }}</div>
+  <div class="notice-header">[!] Third Party SA - {{ sa_applicant_type | replace("_", " ") }}</div>
   <div class="notice-body">
     The Securitisation Application has been filed by a party who is
     <strong>neither the borrower nor the guarantor</strong>.
@@ -453,7 +453,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 
 <!-- Prayer Clause Summary (v5.4) -->
 <div class="prayer-summary">
-  <div class="prayer-header">SA Prayer Clause — Measures Challenged</div>
+  <div class="prayer-header">SA Prayer Clause - Measures Challenged</div>
   <div class="prayer-tags">
     {% if challenges_demand_notice %}
     <span class="prayer-tag">Section 13(2) Demand Notice</span>
@@ -472,13 +472,13 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
     {% endif %}
     {% if interim_stay_prayed %}
     <span class="prayer-tag interim">Interim Stay Prayed
-      {% if interim_stay_granted %} ✓ Granted{% else %} — Pending{% endif %}
+      {% if interim_stay_granted %} [x] Granted{% else %} - Pending{% endif %}
     </span>
     {% endif %}
   </div>
   {% if not prayer_scope_covers_current_measure %}
   <div class="prayer-mismatch-alert">
-    ⚠ Prayer Scope Mismatch: current enforcement measure not covered
+    [!] Prayer Scope Mismatch: current enforcement measure not covered
     by the SA prayer. Bank should raise this as a preliminary objection.
   </div>
   {% endif %}
@@ -487,7 +487,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 <div class="page-break"></div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     PAGE 2 — RED FLAGS & COMPLIANCE MODULES
+     PAGE 2 - RED FLAGS & COMPLIANCE MODULES
 ═══════════════════════════════════════════════════════════════════ -->
 
 {% if red_flags %}
@@ -499,7 +499,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
     <div class="flag-sev">{{ flag.severity_display }}</div>
   </div>
   <div class="flag-msg">
-    <strong>{{ flag.rule_id }}</strong> — {{ flag.message or 'No detail provided.' }}
+    <strong>{{ flag.rule_id }}</strong> - {{ flag.message or 'No detail provided.' }}
     {% if flag.statute_text %}
     <div style="margin-top:3px;color:#9ca3af;font-size:7pt;font-style:italic;">{{ flag.statute_text }}</div>
     {% endif %}
@@ -522,7 +522,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
     <div class="rule-status {{ r.status | lower }}">{{ r.status }}</div>
     <div class="rule-sev">{{ r.severity_display }}</div>
     <div class="rule-msg">
-      <strong>{{ r.rule_id }}</strong> — {{ r.message or 'No message.' }}
+      <strong>{{ r.rule_id }}</strong> - {{ r.message or 'No message.' }}
       {% if r.statute_text %}
       <div style="color:#9ca3af;font-size:7pt;margin-top:1px;font-style:italic;">{{ r.statute_text }}</div>
       {% endif %}
@@ -535,7 +535,7 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 <div class="page-break"></div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     PAGE 3+ — GROUND SCORES & JUDGMENTS
+     PAGE 3+ - GROUND SCORES & JUDGMENTS
 ═══════════════════════════════════════════════════════════════════ -->
 
 <div class="section-title">Ground-by-Ground Analysis</div>
@@ -568,12 +568,12 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
       </td>
       <td>
         {% if g.ground_strength is not none %}
-          <span class="score-pill" style="background:{{ g.strength_color }};">{{ (g.ground_strength * 100) | int }}% — {{ g.strength_label }}</span>
+          <span class="score-pill" style="background:{{ g.strength_color }};">{{ (g.ground_strength * 100) | int }}% - {{ g.strength_label }}</span>
         {% else %}N/A{% endif %}
       </td>
       <td>
         {% if g.corpus_confidence == "NO_DATA" %}
-          <span style="color:#9ca3af;font-size:8pt;">Corpus statistics not yet available — judgment corpus not loaded.</span>
+          <span style="color:#9ca3af;font-size:8pt;">Corpus statistics not yet available - judgment corpus not loaded.</span>
         {% else %}
           <strong>Verified:</strong> {{ g.corpus_borrower_wins }}/{{ g.corpus_bank_wins }}
           <span style="color:#9ca3af;font-size:7pt;">(of {{ g.corpus_total }})</span><br/>
@@ -582,7 +582,18 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
         {% endif %}
       </td>
       <td>{{ g.corpus_confidence }}</td>
-      <td>{{ g.judgments | length }} judgment(s)</td>
+      <td>
+        {% if g.judgments %}
+          {% for j in g.judgments[:2] %}
+            <div style="font-size:7pt;">{{ j.citation }}{% if j.favor %} ({{ j.favor }}){% endif %}</div>
+          {% endfor %}
+          {% if g.judgments | length > 2 %}
+            <div style="font-size:7pt;color:#9ca3af;">+{{ g.judgments | length - 2 }} more below</div>
+          {% endif %}
+        {% else %}
+          0 judgment(s)
+        {% endif %}
+      </td>
     </tr>
     {% else %}
     <tr><td colspan="7" style="color:#9ca3af;text-align:center;padding:12px;">No grounds identified.</td></tr>
@@ -595,19 +606,18 @@ table.ground-table tr:nth-child(even) td { background: #f9fafb; }
 {% if g.judgments %}
 <div class="no-break" style="margin-bottom:14px;">
   <div style="font-size:9pt;font-weight:700;color:#1e3a5f;margin-bottom:6px;border-bottom:1px dashed #e5e7eb;padding-bottom:4px;">
-    {{ g.ground_display }} — Precedents
+    {{ g.ground_display }} - Precedents
   </div>
   {% for j in g.judgments %}
-  <div class="judgment-block {% if j.status == 'SIMILARITY_RETRIEVED' %}similarity{% endif %}">
+  <div class="judgment-block">
     <div class="j-citation">{{ j.citation }}</div>
     <div class="j-meta">{{ j.court }} &nbsp;|&nbsp; {{ 'Favour: ' + j.favor if j.favor else 'Favour: Not Specified' }}</div>
     {% if j.holding_summary %}
     <div class="j-holding">{{ j.holding_summary }}</div>
     {% endif %}
-    <div class="j-status {{ j.status | lower | replace('_retrieved','') }}">
-      {% if j.status == 'APPLICABLE' %}✓ Applicable — Conditions Verified
+    <div class="j-status {{ j.status | lower }}">
+      {% if j.status == 'APPLICABLE' %}[x] Applicable - Conditions Verified
       {% elif j.status == 'PARTIAL' %}~ Partially Applicable
-      {% elif j.status == 'SIMILARITY_RETRIEVED' %}⚠ Similarity Retrieved — Conditions NOT Verified
       {% else %}{{ j.status }}{% endif %}
     </div>
     {% if j.reason %}

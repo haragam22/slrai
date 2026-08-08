@@ -216,7 +216,7 @@ def evaluate_rule(rule: dict, confirmed_facts: dict) -> RuleResult:
         if field_val is None:
             return RuleResult(
                 rule_id=rule_id, module=module,
-                status="UNKNOWN", severity="UNKNOWN",
+                status="UNKNOWN", severity="UNKNOWN", outcome_favors="NEUTRAL",
                 message=f"Precondition field '{pre['field']}' not confirmed. "
                         f"Cannot evaluate {rule_id}.",
                 detail={},
@@ -230,7 +230,7 @@ def evaluate_rule(rule: dict, confirmed_facts: dict) -> RuleResult:
             return RuleResult(
                 rule_id=rule_id, module=module,
                 status="PASS",  # not applicable = not a problem
-                severity=None,
+                severity=None, outcome_favors="BANK",
                 message=f"Rule {rule_id} not applicable: precondition '{pre['field']}' is {field_val}.",
                 detail={}, judgment_tags=[],
             )
@@ -261,7 +261,7 @@ def evaluate_rule(rule: dict, confirmed_facts: dict) -> RuleResult:
         except Exception as e:
             return RuleResult(
                 rule_id=rule_id, module=module,
-                status="UNKNOWN", severity="UNKNOWN",
+                status="UNKNOWN", severity="UNKNOWN", outcome_favors="NEUTRAL",
                 message=f"Cannot evaluate {rule_id}: required fact not confirmed. ({e})",
                 detail={"expression": expression},
                 judgment_tags=check.get("judgment_tags", []),
@@ -269,10 +269,19 @@ def evaluate_rule(rule: dict, confirmed_facts: dict) -> RuleResult:
 
         if result:
             message = safe_format(check["message_template"], names)
+            # outcome_favors is mandatory per check — a rule author must say
+            # who this specific finding favors; the status label (PASS/FAIL/
+            # REVIEW) is not a reliable proxy for that (see compliance_score.py).
+            if "outcome_favors" not in check:
+                raise KeyError(
+                    f"{rule_id}/{check.get('check_id', '?')}: missing required "
+                    f"'outcome_favors' field (BANK/BORROWER/NEUTRAL)"
+                )
             return RuleResult(
                 rule_id=rule_id, module=module,
                 status=check["result_if_true"],
                 severity=check["severity"],
+                outcome_favors=check["outcome_favors"],
                 message=message,
                 detail={"expression": expression, "evaluated_names": {
                     k: str(v) for k, v in names.items()
@@ -280,12 +289,12 @@ def evaluate_rule(rule: dict, confirmed_facts: dict) -> RuleResult:
                 judgment_tags=check.get("judgment_tags", []),
             )
 
-    # Step 4: All checks passed
+    # Step 4: All checks passed — no defect found, a clean record is bank-favorable.
     pass_message = safe_format(rule.get("pass_message_template", "Rule passed."), names)
 
     return RuleResult(
         rule_id=rule_id, module=module,
-        status="PASS", severity=None,
+        status="PASS", severity=None, outcome_favors="BANK",
         message=pass_message,
         detail={}, judgment_tags=[],
     )

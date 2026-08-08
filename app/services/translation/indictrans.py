@@ -59,8 +59,11 @@ def preprocess_hindi(text: str) -> str:
 def translate_batch(texts: list[str]) -> list[str]:
     """Single batched forward pass through IndicTrans2. Never call one-at-a-time."""
     _load_model()
+    # IndicTrans2 tokenizer requires "src_lang tgt_lang text" — this module is
+    # Hindi->English only (see module docstring), so tags are fixed.
+    tagged_texts = [f"hin_Deva eng_Latn {t}" for t in texts]
     inputs = _tokenizer(
-        texts,
+        tagged_texts,
         return_tensors="pt",
         padding=True,
         truncation=True,
@@ -69,7 +72,7 @@ def translate_batch(texts: list[str]) -> list[str]:
 
     with torch.no_grad():
         outputs = _model.generate(
-            **inputs, max_length=512, num_beams=4, early_stopping=True
+            **inputs, max_length=512, num_beams=4, early_stopping=True, use_cache=False
         )
     return [_tokenizer.decode(o, skip_special_tokens=True) for o in outputs]
 

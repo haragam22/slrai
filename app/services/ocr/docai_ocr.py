@@ -11,6 +11,7 @@ import os
 
 from google.api_core.client_options import ClientOptions
 from google.api_core.exceptions import GoogleAPICallError
+from google.auth.exceptions import GoogleAuthError
 from google.cloud import documentai
 
 from app.config import settings
@@ -108,12 +109,16 @@ def extract_one_chunk(file_bytes: bytes, mime_type: str = "application/pdf") -> 
         client = get_ocr_client()
         raw_document = documentai.RawDocument(content=file_bytes, mime_type=mime_type)
         request = documentai.ProcessRequest(name=_processor_name(), raw_document=raw_document)
-        result = client.process_document(request=request)
+        # retry=None — a dead/expired ADC refresh token is not transient and
+        # otherwise retries under gapic's default retry policy for minutes
+        # before surfacing; fail fast so the pypdf fallback below can run.
+        result = client.process_document(request=request, retry=None, timeout=30.0)
         document = result.document
-    except GoogleAPICallError as exc:
-        # ponytail: Document AI unreachable (billing/quota/auth) — local pypdf
-        # text-layer fallback so the pipeline still runs on born-digital PDFs.
-        # Scanned/image-only PDFs still need real Document AI OCR.
+    except (GoogleAPICallError, GoogleAuthError) as exc:
+        # ponytail: Document AI unreachable (billing/quota/auth, incl. expired
+        # ADC refresh token) — local pypdf text-layer fallback so the pipeline
+        # still runs on born-digital PDFs. Scanned/image-only PDFs still need
+        # real Document AI OCR.
         logger.warning(
             "DOCAI_FALLBACK_TRIGGERED: Document AI call failed (%s) — "
             "using local pypdf text-layer extraction instead. "
@@ -123,30 +128,33 @@ def extract_one_chunk(file_bytes: bytes, mime_type: str = "application/pdf") -> 
         )
         return _extract_local(file_bytes)
 
-    full_text = document.text
+    # Layout Parser processors return document.document_layout.blocks, not the
+    # legacy document.pages[].paragraphs — no bounding_poly/confidence on
+    # document.pages for this processor type, so we read blocks directly.
     paragraphs = []
     seq = 0
-    for page in document.pages:
-        page_num = page.page_number
-        for para in page.paragraphs:
-            text = _layout_text(full_text, para.layout)
-            if not text.strip():
-                continue
-            bbox = _bbox_from_layout(para.layout)
-            confidence = para.layout.confidence if para.layout else None
-            paragraphs.append({
-                "page_number":    page_num,
-                "para_sequence":  seq,
-                "text":           text,
-                "bbox":           bbox,
-                "ocr_confidence": confidence,
-                "role":           None,
-            })
-            seq += 1
+    page_count = 0
+    for block in document.document_layout.blocks:
+        text = block.text_block.text
+        if not text.strip():
+            continue
+        # DocumentLayoutBlock has no bounding_box field (layout parser blocks
+        # carry text_block/table_block/list_block/block_id/page_span only) —
+        # bbox is unavailable at this granularity, same as the pypdf fallback.
+        page_count = max(page_count, block.page_span.page_end)
+        paragraphs.append({
+            "page_number":    block.page_span.page_start,
+            "para_sequence":  seq,
+            "text":           text,
+            "bbox":           None,
+            "ocr_confidence": None,
+            "role":           None,
+        })
+        seq += 1
 
     return {
         "paragraphs": paragraphs,
-        "page_count": len(document.pages),
+        "page_count": page_count,
     }
 
 
@@ -175,26 +183,3 @@ def _extract_local(file_bytes: bytes) -> dict:
             seq += 1
 
     return {"paragraphs": paragraphs, "page_count": len(reader.pages)}
-
-
-def _layout_text(full_text: str, layout: "documentai.Document.Page.Layout") -> str:
-    if not layout or not layout.text_anchor or not layout.text_anchor.text_segments:
-        return ""
-    parts = []
-    for seg in layout.text_anchor.text_segments:
-        start = int(seg.start_index) if seg.start_index else 0
-        end = int(seg.end_index)
-        parts.append(full_text[start:end])
-    return "".join(parts)
-
-
-def _bbox_from_layout(layout: "documentai.Document.Page.Layout") -> dict | None:
-    if not layout or not layout.bounding_poly or not layout.bounding_poly.normalized_vertices:
-        return None
-    verts = layout.bounding_poly.normalized_vertices
-    if len(verts) < 3:
-        return None
-    return {
-        "x1": verts[0].x, "y1": verts[0].y,
-        "x2": verts[2].x, "y2": verts[2].y,
-    }
